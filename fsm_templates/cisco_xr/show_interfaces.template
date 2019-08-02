@@ -1,0 +1,28 @@
+Value Required INTERFACE (\S+)
+Value LINK_STATUS (.+?)
+Value PROTOCOL_STATUS (.+?)
+Value HARDWARE_TYPE (\S+?(?:\s+Ethernet|))
+Value ADDRESS ((?:\w{4}\.){2}\w{4})
+Value MTU (\d+)
+Value DUPLEX (.+?)
+Value SPEED (.+?)
+Value BANDWIDTH (\d+\s+\w+)
+Value ENCAPSULATION (\w+)
+Value INPUT_RATE (\d+)
+Value OUTPUT_RATE (\d+)
+Value INPUT_ERRORS (\d+)
+Value OUTPUT_ERRORS (\d+)
+
+
+Start
+  ^\S+\s+is -> Continue.Record
+  ^${INTERFACE}\sis\s+${LINK_STATUS},\s+line\sprotocol\sis\s+${PROTOCOL_STATUS}\s*$$
+  ^\s+Hardware\s+is\s+${HARDWARE_TYPE}(?:,\s+address\s+is\s+${ADDRESS})
+  ^\s+MTU\s+${MTU}.*BW\s+${BANDWIDTH}
+  ^\s+Encapsulation\s+${ENCAPSULATION}
+  ^\s+(?:[Dd]uplex\s+|)${DUPLEX}(?:-[Dd]uplex|),\s+${SPEED},.+link
+  ^\s+${INPUT_ERRORS}\s+input\s+errors.*
+  ^\s+${OUTPUT_ERRORS}\s+output\s+errors.*
+  ^\s+5\s+minute\s+input\s+rate\s+${INPUT_RATE}
+  ^\s+5\s+minute\s+output\s+rate\s+${OUTPUT_RATE}
+

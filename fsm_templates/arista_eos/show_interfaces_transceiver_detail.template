@@ -1,0 +1,51 @@
+Value Required PORT (\S+)
+Value Filldown TYPE ((\S|\s)+?)
+Value CURRENT_VALUE (\S+)
+Value HIGH_ALARM_THRESHOLD (\S+)
+Value HIGH_WARN_THRESHOLD (\S+)
+Value LOW_ALARM_THRESHOLD (\S+)
+Value LOW_WARN_THRESHOLD (\S+)
+
+Value Filldown INTERFACE (\S+/\S+/\S+/\S+)
+Value Filldown TEMPERATURE_VALUE ([-\+]?\d+\.\d+)
+Value Filldown TEMPERATURE_ALARM_HIGH ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_ALARM_LOW ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_WARN_HIGH ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_WARN_LOW ([-\+]?\d+\.\d+\sC)
+Value Filldown VOLTAGE_VALUE ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_ALARM_HIGH ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_ALARM_LOW ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_WARN_HIGH ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_WARN_LOW ([-\+]?\d+\.\d+\sVolt)
+Value Filldown RX_VALUE ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_ALARM_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_ALARM_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_WARN_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_WARN_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_VALUE ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_ALARM_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_ALARM_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_WARN_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_WARN_LOW ([-\+]?\d+\.\d+\sdBm)
+
+
+
+Start
+  ^mA:\smilliamperes,\s+
+  ^\+\+\s:\shigh\salarm,\s+
+  ^A2D\sreadouts\s+
+  ^The\sthreshold\svalues\sare\scalibrated\.
+  ^\s+High\sAlarm\s+\S+
+  ^\s+${TYPE}\s+Threshold\s+ -> Values
+  ^\s+$$
+  ^$$
+  ^.* -> Error "LINE NOT FOUND"
+
+Values
+  ^Port\s+\S+
+  ^-+\s+-+\s+-+\s+-+\s+-+\s+-+\s+
+  ^${PORT}\s+${CURRENT_VALUE}\s+${HIGH_ALARM_THRESHOLD}\s+${HIGH_WARN_THRESHOLD}\s+${LOW_ALARM_THRESHOLD}\s+${LOW_WARN_THRESHOLD} -> Record
+  ^\s+High\sAlarm\s+High Warn\s+Low\sAlarm\s+Low\sWarn -> Start
+  ^\s+$$
+  ^$$
+  ^.* -> Error "LINE NOT FOUND"

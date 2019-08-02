@@ -1,0 +1,10 @@
+Value PART_NAME ([^"]+)
+Value Filldown PID (\S+)
+Value Filldown VERSION (\S+)
+Value Filldown DESCRIPTION ([^"]+)
+Value SERIAL (\S+)
+
+
+Start
+  ^NAME:\s+"${PART_NAME}",\s+DESCR:\s+"${DESCRIPITON}"\nPID:\s+${PID}\s+,\s+VID:\s+${VERSION},\s+SN:\s+${SERIAL} -> Record
+

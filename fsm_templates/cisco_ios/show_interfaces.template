@@ -1,0 +1,27 @@
+Value Required INTERFACE (\S+)
+Value LINK_STATUS (.+?)
+Value PROTOCOL_STATUS (.+?)
+Value HARDWARE_TYPE ([\w ]+)
+Value ADDRESS ([a-fA-F0-9]{4}\.[a-fA-F0-9]{4}\.[a-fA-F0-9]{4})
+Value MTU (\d+)
+Value DUPLEX (([Ff]ull|[Aa]uto|[Hh]alf|[Aa]-).*?)
+Value SPEED (.*?)
+Value BANDWIDTH (\d+\s+\w+)
+Value ENCAPSULATION (.+?)
+Value INPUT_RATE (\d+)
+Value OUTPUT_RATE (\d+)
+Value INPUT_ERRORS (\d+)
+Value OUTPUT_ERRORS (\d+)
+
+Start
+  ^\S+\s+is\s+${LINK_STATUS},\s+line\s+protocol\s+is\s+${PROTOCOL_STATUS}.*$$ -> Continue.Record
+  ^${INTERFACE}\s+is\s+${LINK_STATUS},\s+line\s+protocol\s+is\s+${PROTOCOL_STATUS}\s*$$
+  ^\s+Hardware\s+is\s+${HARDWARE_TYPE} -> Continue
+  ^.+address\s+is\s+${ADDRESS}\s
+  ^\s+MTU\s+${MTU}.*BW\s+${BANDWIDTH}.*
+  ^\s+Encapsulation\s+${ENCAPSULATION},.+$$
+  ^\s+${DUPLEX},\s+${SPEED},.+$$
+  ^.*input\s+rate\s+${INPUT_RATE}.+$$
+  ^.*output\s+rate\s+${OUTPUT_RATE}.+$$
+  ^\s+${INPUT_ERRORS}\s+input\s+errors,\s+\d+\s+CRC,\s+\d+\s+frame,\s+\d+\s+overrun,\s+\d+\s+ignored\s*$$
+  ^\s+${OUTPUT_ERRORS}\s+output\s+errors,\s+\d+\s+collisions,\s+\d+\s+interface\s+resets\s*$$

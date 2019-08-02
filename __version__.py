@@ -1,0 +1,6 @@
+__author__ = "Eric Rochow"
+__author_email__ = "ericrochow@gmail.com"
+__description__ = ""
+__title__ = "sdnify"
+__url__ = ""
+__version__ = "0.1.0"

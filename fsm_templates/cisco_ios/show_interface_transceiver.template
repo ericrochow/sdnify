@@ -1,0 +1,25 @@
+Value Filldown INTERFACE (\S+/\S+/\S+/\S+)
+Value Filldown TEMPERATURE_VALUE ([-\+]?\d+\.\d+)
+Value Filldown TEMPERATURE_ALARM_HIGH ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_ALARM_LOW ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_WARN_HIGH ([-\+]?\d+\.\d+\sC)
+Value Filldown TEMPERATURE_WARN_LOW ([-\+]?\d+\.\d+\sC)
+Value Filldown VOLTAGE_VALUE ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_ALARM_HIGH ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_ALARM_LOW ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_WARN_HIGH ([-\+]?\d+\.\d+\sVolt)
+Value Filldown VOLTAGE_WARN_LOW ([-\+]?\d+\.\d+\sVolt)
+Value Filldown RX_VALUE ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_ALARM_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_ALARM_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_WARN_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown RX_WARN_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_VALUE ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_ALARM_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_ALARM_LOW ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_WARN_HIGH ([-\+]?\d+\.\d+\sdBm)
+Value Filldown TX_WARN_LOW ([-\+]?\d+\.\d+\sdBm)
+
+
+Start
+  ^${INTERFACE}\s+${TEMPERATURE_VALUE}\s+${VOLTAGE_VALUE}\s+(\d+\.\d+\s+)?(\-+)?\s+${TX_VALUE}\s+${RX_VALUE}\s+ -> Record
