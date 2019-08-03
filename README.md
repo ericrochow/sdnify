@@ -1,10 +1,44 @@
 # sdnify
 
+## Overview
+
+sdnify is meant as a quick way of gather information by running several commands, parsing the outputs, the returning values in an easily-digestible format.
+
+
+This is currently a re-write of the original sdnify script that was CLI-only. The write is being done with the intention of providing more flexibility, which has brought to light no shortage of refactoring and modularity requirements.
+
+## Installation
+
 inside your virtual environment:
 
 ``pip install -r requirements.txt``
 
-Copy ``config.default`` to ``.config.yml`` and fill out with the appropriate username and password (coughautomationcough). For the love of God, ``chmod 400`` that file. Like, for real. It has a plaintext password in it.
+
+## Device Credentials
+
+There are a few different options to pass device credentials:
+
+### CLI Prompt
+
+If no other method of credential storage is used, sdnify will fall back on prompting for a username and password. This is not only the least efficient in terms of time to results, it may also cause things to fall over for devices using 2fa, etc.
+
+### Configuration File
+
+Copy ``config.default`` to ``.config.yml`` in the root directory of the project and fill out with the appropriate username and password. For the love of God, ``chmod 400`` that file. Like, for real. It has a plaintext password in it.
+
+This only really works if cloned from git right now.
+
+### Environment Variables
+
+sdnify will read credentals from environment variables `NETUSERNAME` and `NETPASSWORD` if they are set. These will take precedence over the configuration file.
+
+### CLI Arguments
+
+If you are running sdnify from the cli, it is possible to pass the `--username` and `--password` arguments. If both are passed, these will take precedence over all the above.
+
+## Usage
+
+### CLI
 
 for help /path/to/python sdnify.py -h
 
@@ -12,49 +46,8 @@ You can add the following to your .bashrc:
 
 ``alias sdnify='/path/to/env/bin/python /path/to/sdnify/sdnify.py'``
 
-Then ``source ~/.bashrc`` and you can do the following:
+### Slack
 
-``sdnify lw-dc3-core1-nexus.rtr -i e1/1 -p nexus``
+Planned feature enhancement to allow use as a module for use in Slack integrations.
 
-The following results will be generated:
-
-```
-[erochow@beardofprey ~]$ sdnify lw-dc3-core1-nexus.rtr -i e1/1 -p nexus
-
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-!Command: show running-config interface Ethernet1/1
-!Time: Wed Oct 19 20:16:32 2016
-
-version 6.2(14)
-
-interface Ethernet1/1
-  description Connection to lw-dc3-core1.rtr.liquidweb.com
-  channel-group 5 mode active
-  no shutdown
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           SFP Detail Diagnostics Information (internal calibration)
-  ----------------------------------------------------------------------------
-                Current              Alarms                  Warnings
-                Measurement     High        Low         High          Low
-  ----------------------------------------------------------------------------
-  Temperature   32.73 C        75.00 C     -5.00 C     70.00 C        0.00 C
-  Voltage        3.32 V         3.63 V      2.97 V      3.46 V        3.13 V
-  Current        5.44 mA       10.50 mA     2.50 mA    10.50 mA       2.50 mA
-  Tx Power      -2.41 dBm       1.69 dBm  -11.30 dBm   -1.30 dBm     -7.30 dBm
-  Rx Power      -2.50 dBm       2.00 dBm  -13.90 dBm   -1.00 dBm     -9.90 dBm
-  Transmit Fault Count = 0
-  ----------------------------------------------------------------------------
-  Note: ++  high-alarm; +  high-warning; --  low-alarm; -  low-warning
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    input rate 3.00 Mbps, 618 pps; output rate 2.26 Mbps, 1.44 Kpps
-  RX
-    0 input error  0 short frame  0 overrun   0 underrun  0 ignored
-  TX
-    0 output error  0 collision  0 deferred  0 late collision
-lw-dc3-core1-nexus#
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-```
+Will require major refactors.
