@@ -1,10 +1,10 @@
 from . import Platform
 
 
-class NXOS(Platform):
+class FORTIOS(Platform):
     """
     Instantiates an object of the Platform class with the appropriate options
-        for a Cisco NX-OS device.
+        for an Arista EOS device.
 
     Args:
       None
@@ -12,23 +12,23 @@ class NXOS(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
-        self.platform = "cisco_nxos"
+        self.platform = "fortinet"
         self.templates = {
             "counters": "show_interfaces.template",
             "ifconfig": "",
-            "xcvr": "nxos_show_interface_transceiver_details.template",
+            "xcvr": "show_interface_transceiver_details.template",
             "version": "",
             "inventory": "",
         }
         self.commands = {
             "counters": "show interface {}".format(arguments.interface_name),
-            "ifconfig": "show running_config interface {}".format(
+            "ifconfig": "show running-config interface {}".format(
                 arguments.interface_name
             ),
-            "xcvr": "show interface {} transceiver details".format(
+            "xcvr": "show interfaces {} transceiver details".format(
                 arguments.interface_name
             ),
             "version": "",

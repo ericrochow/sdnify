@@ -12,7 +12,7 @@ class JUNOS(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
         self.platform = "juniper_junos"

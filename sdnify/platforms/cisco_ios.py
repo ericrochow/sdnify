@@ -12,9 +12,22 @@ class IOS(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
+        if "interface" in kwargs:
+            interface_name = kwargs["interface"]
+        else:
+            interface_name = None
+        if "mac" in kwargs:
+            mac = kwargs["mac"]
+        else:
+            mac = None
+        if "route" in kwargs:
+            route = kwargs["route"]
+        else:
+            route = None
+        self.platform = "arista_eos"
         self.platform = "cisco_ios"
         self.templates = {
             "counters": "show_interfaces.template",
@@ -24,13 +37,11 @@ class IOS(Platform):
             "inventory": "",
         }
         self.commands = {
-            "counters": "show interfaces {}".format(arguments.interface_name),
+            "counters": "show interfaces {}".format(interface_name),
             "ifconfig": "show running-config interface {}".format(
-                arguments.interface_name
+                interface_name
             ),
-            "xcvr": "show interfaces {} transceiver".format(
-                arguments.interface_name
-            ),
+            "xcvr": "show interfaces {} transceiver".format(interface_name),
             "version": "",
             "inventory": "",
         }

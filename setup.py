@@ -50,7 +50,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-packages = ["platforms"]
+packages = ["sdnify"]
 
 setup(
     name=__version__.__title__,
@@ -59,8 +59,8 @@ setup(
     author_email=__version__.__author_email__,
     url=__version__.__url__,
     packages=packages,
-    package_data={"": ["LICENSE", "NOTICE"], "requests": [""]},
-    package_dir={"requests": "requests"},
+    package_data={"": ["LICENSE", "NOTICE"], "sdnify": [""]},
+    package_dir={"sdnify": "sdnify"},
     include_package_data=True,
     python_requires=">=3.5",
     install_requires=requires,
@@ -68,7 +68,7 @@ setup(
     zip_safe=False,
     description=__version__.__description__,
     long_description=readme,
-    scripts=["sdnify"],
+    scripts=["sdnify/cli.py"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

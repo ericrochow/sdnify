@@ -1,10 +1,10 @@
 from . import Platform
 
 
-class PANOS(Platform):
+class NXOS(Platform):
     """
     Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
+        for a Cisco NX-OS device.
 
     Args:
       None
@@ -12,24 +12,36 @@ class PANOS(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
-        self.platform = "paloalto_panos"
-
+        if "interface" in kwargs:
+            interface_name = kwargs["interface"]
+        else:
+            interface_name = None
+        if "mac" in kwargs:
+            mac = kwargs["mac"]
+        else:
+            mac = None
+        if "route" in kwargs:
+            route = kwargs["route"]
+        else:
+            route = None
+        self.platform = "arista_eos"
+        self.platform = "cisco_nxos"
         self.templates = {
             "counters": "show_interfaces.template",
             "ifconfig": "",
-            "xcvr": "show_interface_transceiver_details.template",
+            "xcvr": "nxos_show_interface_transceiver_details.template",
             "version": "",
             "inventory": "",
         }
         self.commands = {
             "counters": "show interface {}".format(arguments.interface_name),
-            "ifconfig": "show running-config interface {}".format(
+            "ifconfig": "show running_config interface {}".format(
                 arguments.interface_name
             ),
-            "xcvr": "show interfaces {} transceiver details".format(
+            "xcvr": "show interface {} transceiver details".format(
                 arguments.interface_name
             ),
             "version": "",

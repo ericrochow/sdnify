@@ -1,10 +1,10 @@
 from . import Platform
 
 
-class IOSXR(Platform):
+class PANOS(Platform):
     """
     Instantiates an object of the Platform class with the appropriate options
-        for a Cisco IOS-XR device.
+        for an Arista EOS device.
 
     Args:
       None
@@ -12,23 +12,26 @@ class IOSXR(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
-        self.platform = "cisco_xr"
+        self.platform = "paloalto_panos"
+
         self.templates = {
             "counters": "show_interfaces.template",
             "ifconfig": "",
-            "xcvr": "show_controllers_phy.template",
+            "xcvr": "show_interface_transceiver_details.template",
             "version": "",
             "inventory": "",
         }
         self.commands = {
-            "counters": "show interfaces {}".format(arguments.interface_name),
+            "counters": "show interface {}".format(arguments.interface_name),
             "ifconfig": "show running-config interface {}".format(
                 arguments.interface_name
             ),
-            "xcvr": "show controllers {} phy".format(arguments.interface_name),
+            "xcvr": "show interfaces {} transceiver details".format(
+                arguments.interface_name
+            ),
             "version": "",
             "inventory": "",
         }

@@ -1,12 +1,18 @@
 #!/usr/bin/env python
+import argparse
 import os
 from os.path import dirname, realpath
-import argparse
+
 import colorama
-from prettytable import PrettyTable
+
 from netmiko import ConnectHandler
+
+from prettytable import PrettyTable
+
 from termcolor import colored
+
 from textfsm import TextFSM
+
 import yaml
 
 from .arista_eos import EOS
@@ -24,9 +30,7 @@ class Platform(object):
     """
     """
 
-    def __init__(
-        self, arguments, templates, commands, interface_name=None, address=None
-    ):
+    def __init__(self, arguments, templates, commands):
         """
         """
         self.TEMPLATE_PATH = os.path.join(
@@ -63,10 +67,10 @@ class Platform(object):
         Returns:
           An instantiated netmiko connection handler.
         """
-        if self.arguments.username and self.arguments.password:
+        if "username" in self.arguments and "password" in self.arguments:
             username, password = (
-                self.arguments.username,
-                self.arguments.password,
+                self.arguments["username"],
+                self.arguments["password"],
             )
         elif os.environ["NETUSERNAME"] and os.environ["NETPASSWORD"]:
             username, password = (
@@ -179,160 +183,6 @@ class Platform(object):
         fsm_template = TextFSM(self.software_template)
         software_results = fsm_template.ParseText(output)[0]
         return software_results
-
-    def colorize_tx_level(self, xcvr_details):
-        """
-        Colorizes the optical Tx levels based on the current value and the
-            warn/alarm thresholds.
-
-        Args:
-          xcvr_details: A dict containing information about the current Tx
-              value and the different thresholds
-        Returns:
-          A colorized string containing the current Tx level.
-        """
-        if float(xcvr_details["tx_current"]) > float(
-            xcvr_details["tx_alarm_high"]
-        ) or float(xcvr_details["tx_current"]) < float(
-            xcvr_details["tx_alarm_low"]
-        ):
-            pigment = "red"
-        elif float(xcvr_details["tx_current"]) > float(
-            xcvr_details["tx_warn_high"]
-        ) or float(xcvr_details["tx_current"]) < float(
-            xcvr_details["tx_warn_low"]
-        ):
-            pigment = "yellow"
-        else:
-            pigment = "green"
-        return colored(xcvr_details["tx_current"], pigment)
-
-    def colorize_rx_level(self, xcvr_details):
-        """
-        Colorizes the optical Rx levels based on the current value and the
-            warn/alarm thresholds.
-
-        Args:
-          xcvr_details: A dict containing information about the current Rx
-              value and the different thresholds
-          Returns:
-            A colorized string containing the current Rx level.
-        """
-        if not (
-            xcvr_details["rx_alarm_high"]
-            or xcvr_details["rx_alarm_low"]
-            or xcvr_details["rx_warn_high"]
-            or xcvr_details["rx_warn_low"]
-        ):
-            rx_value = xcvr_details["rx_current"]
-        elif float(xcvr_details["rx_current"]) > float(
-            xcvr_details["rx_alarm_high"]
-        ) or float(xcvr_details["rx_current"]) < float(
-            xcvr_details["rx_alarm_low"]
-        ):
-            rx_value = colored(["rx_current"], "red")
-        elif float(xcvr_details["rx_current"]) > float(
-            xcvr_details["rx_warn_high"]
-        ) or float(xcvr_details["rx_current"]) < float(
-            xcvr_details["rx_warn_low"]
-        ):
-            rx_value = colored(xcvr_details["rx_current"], "yellow")
-        else:
-            rx_value = colored(xcvr_details["rx_current"], "green")
-        return rx_value
-
-    def colorize_in_errors(self, counters_details):
-        """
-        Colorizes the input errors value in the event of a non-zero value.
-
-        Args:
-          counters_details: A dict containing
-        Returns:
-          A colorized string containing the number of input errors.
-        """
-        if int(counters_details["input_errors"]) > 0:
-            counter = colored(counters_details["input_errors"], "red")
-        else:
-            counter = counters_details["input_errors"]
-        return counter
-
-    def colorize_out_errors(self, counters_details):
-        """
-        Colorizes the output errors value in the event of a non-zero value.
-
-        Args:
-          counters_details: A dict containing
-        Returns:
-          A colorized string containing the number of input errors.
-        """
-        if int(counters_details["output_errors"]) > 0:
-            counter = colored(counters_details["output_errors"], "red")
-        else:
-            counter = counters_details["output_errors"]
-        return counter
-
-    def colorize_temperature(self, temperature):
-        """
-        Colorizes the temperature value based on threshold values.
-
-        Args:
-          temperature: A dict containing the current temperature and threshold
-              values.
-        Returns:
-          A colorized string containing the temperature.
-        """
-        if not (
-            temperature[""]
-            or temperature[""]
-            or temperature[""]
-            or temperature[""]
-        ):
-            temperature_str = temperature[""]
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "red")
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "orange")
-        elif float(temperature[""]) < float(temperature[""]):
-            temperature_str = colored(temperature[""], "blue")
-        elif float(temperature[""]) < float(temperature[""]):
-            temperature_str = colored(temperature[""], "cyan")
-        else:
-            temperature_str = colored(temperature[""], "green")
-        return temperature_str
-
-    def colorize_voltage(self, voltage):
-        """
-        Colorizes the voltage value based on threshold values.
-
-        Args:
-          voltage: A dict containing the current voltage and threshold values.
-        Returns:
-          A colorized string containing the voltage.
-        """
-        if not (voltage[""] or voltage[""] or voltage[""] or voltage[""]):
-            voltage_str = voltage[""]
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
-        ):
-            voltage_str = colored(voltage[""], "red")
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
-        ):
-            voltage_str = colored(voltage[""], "yellow")
-        else:
-            voltage_str = colored(voltage[""], "green")
-        return voltage_str
-
-    def colorize_amperage(self, amps):
-        """
-        Colorizes the current/amp value based on the threshold values.
-
-        Args:
-          amps: A dict containing the current current and threshold values.
-        Returns:
-          A colorized string containing the current/amperage.
-        """
-        pass
 
     def gather_interface_details(self):
         """
@@ -547,125 +397,132 @@ class Platform(object):
             output += "\n"
             return output
 
+       def create_ios_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-def create_ios_scraper(arguments):
-    """
-    Generates a screen scraper object.
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = IOS(arguments)
+        return scraper_object
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+    def create_nxos_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = NXOS(arguments)
+        return scraper_object
 
-def create_nxos_scraper(arguments):
-    """
-    Generates a screen scraper object.
+    def create_iosxr_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = NXOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = IOSXR(arguments)
+        return scraper_object
 
+    def create_iosxe_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-def create_iosxr_scraper(arguments):
-    """
-    Generates a screen scraper object.
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = IOSXE(arguments)
+        return scraper_object
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXR(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+    def create_eos_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = EOS(arguments)
+        return scraper_object
 
-def create_iosxe_scraper(arguments):
-    """
-    Generates a screen scraper object.
+    def create_panos_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXE(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = PANOS(arguments)
+        return scraper_object
 
+    def create_junos_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-def create_eos_scraper(arguments):
-    """
-    Generates a screen scraper object.
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = JUNOS(arguments)
+        return scraper_object
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = EOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+    def create_foritos_scraper(arguments):
+        """
+        Generates a screen scraper object.
 
-
-def create_panos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = PANOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
-
-
-def create_junos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = JUNOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+        Args:
+          arguments: An argparse-formatted dictionary
+        Returns:
+          A screen scraping object.
+        """
+        scraper_object = FORTIOS(arguments)
+        return scraper_object
 
 
-def create_foritos_scraper(arguments):
-    """
-    Generates a screen scraper object.
+    def generate_scraper():
+        """
+        Master function to generate the scraper, scrape the results, then
+            format them.
 
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = FORTIOS(
-        arguments.device, arguments.interfacece, arguments.route
-    )
-    return scraper_object
+        Args:
+          None
+        Returns:
+          None
+        """
+        arguments = initialize_parser()
+            parsed_args = {"device": device}
+        if arguments.interface:
+            parsed_args["interface"] = arguments.interface
+        if arguments.route:
+            parsed_args["route"] = arguments.route
+        if arguments.mac_addr:
+            parsed_args["mac"] = arguments.mac_addr
+        if arguments.platform == "ios":
+            scraper_object = create_ios_scraper(parsed_args)
+        elif arguments.platform == "nxos":
+            scraper_object = create_nxos_scraper(parsed_args)
+        elif arguments.platform == "iosxr":
+            scraper_object = create_iosxr_scraper(parsed_args)
+        elif arguments.platform == "eos":
+            scraper_object = create_eos_scraper(parsed_args)
+        return scraper_object
+
+
 
 
 def initialize_parser():
@@ -709,6 +566,135 @@ def initialize_parser():
         help="Return route(s) to a given IP address.",
     )
     return parser.parse_args()
+
+
+def create_ios_scraper(arguments):
+    """
+    Generates a screen scraper object.
+
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = IOS(arguments)
+    return scraper_object
+
+
+def create_nxos_scraper(arguments):
+    """
+    Generates a screen scraper object.
+
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = NXOS(arguments)
+    return scraper_object
+
+
+def create_iosxr_scraper(arguments):
+    """
+    Generates a screen scraper object.
+
+    Args:
+       arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = IOSXR(arguments)
+    return scraper_object
+
+
+def create_iosxe_scraper(arguments):
+    """
+    Generates a screen scraper object.
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = IOSXE(arguments)
+    return scraper_object
+
+
+def create_eos_scraper(arguments):
+    """
+    Generates a screen scraper object.
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = EOS(arguments)
+    return scraper_object
+
+
+def create_panos_scraper(arguments):
+    """
+    Generates a screen scraper object.
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+        """
+    scraper_object = PANOS(arguments)
+    return scraper_object
+
+
+def create_junos_scraper(arguments):
+    """
+    Generates a screen scraper object.
+
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = JUNOS(arguments)
+    return scraper_object
+
+
+def create_foritos_scraper(arguments):
+    """
+    Generates a screen scraper object.
+    Args:
+      arguments: An argparse-formatted dictionary
+    Returns:
+      A screen scraping object.
+    """
+    scraper_object = FORTIOS(arguments)
+    return scraper_object
+
+
+def generate_scraper(arguments):
+    """
+    Master function to generate the scraper, scrape the results, then
+      format them.
+    Args:
+      None
+    Returns:
+      None
+    """
+    parsed_args = {"device": arguments["device"]}
+    if arguments.interface:
+        parsed_args["interface"] = arguments.interface
+    if arguments.route:
+        parsed_args["route"] = arguments.route
+    if arguments.mac_addr:
+        parsed_args["mac"] = arguments.mac_addr
+    if arguments.platform == "ios":
+        scraper_object = create_ios_scraper(parsed_args)
+    elif arguments.platform == "nxos":
+        scraper_object = create_nxos_scraper(parsed_args)
+    elif arguments.platform == "iosxr":
+        scraper_object = create_iosxr_scraper(parsed_args)
+    elif arguments.platform == "eos":
+        scraper_object = create_eos_scraper(parsed_args)
+    return scraper_object
+
+
 
 
 def main():

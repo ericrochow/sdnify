@@ -5,9 +5,22 @@ class IOSXE(Platform):
     """
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
+        if "interface" in kwargs:
+            interface_name = kwargs["interface"]
+        else:
+            interface_name = None
+        if "mac" in kwargs:
+            mac = kwargs["mac"]
+        else:
+            mac = None
+        if "route" in kwargs:
+            route = kwargs["route"]
+        else:
+            route = None
+        self.platform = "arista_eos"
         self.platform = "cisco_xr"
         self.counters_template_name = ""
         self.xcvr_template_name = ""

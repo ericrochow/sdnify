@@ -1,10 +1,10 @@
 from . import Platform
 
 
-class FORTIOS(Platform):
+class IOSXR(Platform):
     """
     Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
+        for a Cisco IOS-XR device.
 
     Args:
       None
@@ -12,25 +12,23 @@ class FORTIOS(Platform):
       An instantiated Platform object.
     """
 
-    def __init__(self, arguments):
+    def __init__(self, **kwargs):
         """
         """
-        self.platform = "fortinet"
+        self.platform = "cisco_xr"
         self.templates = {
             "counters": "show_interfaces.template",
             "ifconfig": "",
-            "xcvr": "show_interface_transceiver_details.template",
+            "xcvr": "show_controllers_phy.template",
             "version": "",
             "inventory": "",
         }
         self.commands = {
-            "counters": "show interface {}".format(arguments.interface_name),
+            "counters": "show interfaces {}".format(arguments.interface_name),
             "ifconfig": "show running-config interface {}".format(
                 arguments.interface_name
             ),
-            "xcvr": "show interfaces {} transceiver details".format(
-                arguments.interface_name
-            ),
+            "xcvr": "show controllers {} phy".format(arguments.interface_name),
             "version": "",
             "inventory": "",
         }
