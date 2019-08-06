@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import argparse
+# import argparse
 import os
 from os.path import dirname, realpath
 
@@ -9,21 +9,28 @@ from netmiko import ConnectHandler
 
 from prettytable import PrettyTable
 
-from termcolor import colored
+# from termcolor import colored
 
 from textfsm import TextFSM
 
 import yaml
 
-from .arista_eos import EOS
-from .cisco_ios import IOS
-from .cisco_nxos import NXOS
-from .cisco_xe import IOSXE
-from .cisco_xr import IOSXR
-from .fortinet import FORTIOS
-from .juniper_junos import JUNOS
-from .paloalto_panos import PANOS
-from ..__version__ import __version__
+# from .arista_eos import EOS
+# from .cisco_ios import IOS
+# from .cisco_nxos import NXOS
+# from .cisco_xe import IOSXE
+# from .cisco_xr import IOSXR
+# from .fortinet import FORTIOS
+# from .juniper_junos import JUNOS
+# from .paloalto_panos import PANOS
+# from ..__version__ import __version__
+from ..interfaces import (
+    create_ios_scraper,
+    create_nxos_scraper,
+    create_iosxr_scraper,
+    create_eos_scraper,
+    initialize_parser,
+)
 
 
 class Platform(object):
@@ -397,304 +404,175 @@ class Platform(object):
             output += "\n"
             return output
 
-       def create_ios_scraper(arguments):
-        """
-        Generates a screen scraper object.
 
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = IOS(arguments)
-        return scraper_object
+# def initialize_parser():
+# """
+# Builds an argument parser object.
 
-    def create_nxos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = NXOS(arguments)
-        return scraper_object
-
-    def create_iosxr_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = IOSXR(arguments)
-        return scraper_object
-
-    def create_iosxe_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = IOSXE(arguments)
-        return scraper_object
-
-    def create_eos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = EOS(arguments)
-        return scraper_object
-
-    def create_panos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = PANOS(arguments)
-        return scraper_object
-
-    def create_junos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = JUNOS(arguments)
-        return scraper_object
-
-    def create_foritos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = FORTIOS(arguments)
-        return scraper_object
-
-
-    def generate_scraper():
-        """
-        Master function to generate the scraper, scrape the results, then
-            format them.
-
-        Args:
-          None
-        Returns:
-          None
-        """
-        arguments = initialize_parser()
-            parsed_args = {"device": device}
-        if arguments.interface:
-            parsed_args["interface"] = arguments.interface
-        if arguments.route:
-            parsed_args["route"] = arguments.route
-        if arguments.mac_addr:
-            parsed_args["mac"] = arguments.mac_addr
-        if arguments.platform == "ios":
-            scraper_object = create_ios_scraper(parsed_args)
-        elif arguments.platform == "nxos":
-            scraper_object = create_nxos_scraper(parsed_args)
-        elif arguments.platform == "iosxr":
-            scraper_object = create_iosxr_scraper(parsed_args)
-        elif arguments.platform == "eos":
-            scraper_object = create_eos_scraper(parsed_args)
-        return scraper_object
-
-
-
-
-def initialize_parser():
-    """
-    Builds an argument parser object.
-
-    Args:
-      None
-    Returns:
-      A parser object that contains the flags and options passed by the CLI.
-    """
-    desc = "Adds some unicorn dust to your networking!"
-    parser = argparse.ArgumentParser(description=desc, version=__version__)
-    parser.add_argument(
-        "device", action="store", help="The device which should be checked."
-    )
-    parser.add_argument(
-        "-p",
-        "--platform",
-        action="store",
-        default="ios",
-        choices=["ios", "nxos", "iosxr", "eos"],
-        help="The device platform (default ios).",
-    )
-    parser.add_argument(
-        "-i",
-        "--interface",
-        action="store",
-        help="Return the given interface's configuration and details.",
-    )
-    parser.add_argument(
-        "-c",
-        "--chassis-details",
-        action="store_true",
-        help="Return information about the chassis.",
-    )
-    parser.add_argument(
-        "-r",
-        "--routes",
-        action="store",
-        help="Return route(s) to a given IP address.",
-    )
-    return parser.parse_args()
-
-
-def create_ios_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOS(arguments)
-    return scraper_object
-
-
-def create_nxos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = NXOS(arguments)
-    return scraper_object
-
-
-def create_iosxr_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-       arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXR(arguments)
-    return scraper_object
-
-
-def create_iosxe_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXE(arguments)
-    return scraper_object
-
-
-def create_eos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = EOS(arguments)
-    return scraper_object
-
-
-def create_panos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-        """
-    scraper_object = PANOS(arguments)
-    return scraper_object
-
-
-def create_junos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = JUNOS(arguments)
-    return scraper_object
-
-
-def create_foritos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = FORTIOS(arguments)
-    return scraper_object
-
-
-def generate_scraper(arguments):
-    """
-    Master function to generate the scraper, scrape the results, then
-      format them.
-    Args:
-      None
-    Returns:
-      None
-    """
-    parsed_args = {"device": arguments["device"]}
-    if arguments.interface:
-        parsed_args["interface"] = arguments.interface
-    if arguments.route:
-        parsed_args["route"] = arguments.route
-    if arguments.mac_addr:
-        parsed_args["mac"] = arguments.mac_addr
-    if arguments.platform == "ios":
-        scraper_object = create_ios_scraper(parsed_args)
-    elif arguments.platform == "nxos":
-        scraper_object = create_nxos_scraper(parsed_args)
-    elif arguments.platform == "iosxr":
-        scraper_object = create_iosxr_scraper(parsed_args)
-    elif arguments.platform == "eos":
-        scraper_object = create_eos_scraper(parsed_args)
-    return scraper_object
-
-
+# Args:
+# None
+# Returns:
+# A parser object that contains the flags and options passed by the CLI.
+# """
+# desc = "Adds some unicorn dust to your networking!"
+# parser = argparse.ArgumentParser(description=desc, version=__version__)
+# parser.add_argument(
+# "device", action="store", help="The device which should be checked."
+# )
+# parser.add_argument(
+# "-p",
+# "--platform",
+# action="store",
+# default="ios",
+# choices=["ios", "nxos", "iosxr", "eos"],
+# help="The device platform (default ios).",
+# )
+# parser.add_argument(
+# "-i",
+# "--interface",
+# action="store",
+# help="Return the given interface's configuration and details.",
+# )
+# parser.add_argument(
+# "-c",
+# "--chassis-details",
+# action="store_true",
+# help="Return information about the chassis.",
+# )
+# parser.add_argument(
+# "-r",
+# "--routes",
+# action="store",
+# help="Return route(s) to a given IP address.",
+# )
+# return parser.parse_args()
+#
+#
+# def create_ios_scraper(arguments):
+# """
+# Generates a screen scraper object.
+#
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = IOS(arguments)
+# return scraper_object
+#
+#
+# def create_nxos_scraper(arguments):
+# """
+# Generates a screen scraper object.
+#
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = NXOS(arguments)
+# return scraper_object
+#
+#
+# def create_iosxr_scraper(arguments):
+# """
+# Generates a screen scraper object.
+#
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = IOSXR(arguments)
+# return scraper_object
+#
+#
+# def create_iosxe_scraper(arguments):
+# """
+# Generates a screen scraper object.
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = IOSXE(arguments)
+# return scraper_object
+#
+#
+# def create_eos_scraper(arguments):
+# """
+# Generates a screen scraper object.
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = EOS(arguments)
+# return scraper_object
+#
+#
+# def create_panos_scraper(arguments):
+# """
+# Generates a screen scraper object.
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = PANOS(arguments)
+# return scraper_object
+#
+#
+# def create_junos_scraper(arguments):
+# """
+# Generates a screen scraper object.
+#
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = JUNOS(arguments)
+# return scraper_object
+#
+#
+# def create_foritos_scraper(arguments):
+# """
+# Generates a screen scraper object.
+# Args:
+# arguments: An argparse-formatted dictionary
+# Returns:
+# A screen scraping object.
+# """
+# scraper_object = FORTIOS(arguments)
+# return scraper_object
+#
+#
+# def generate_scraper(arguments):
+# """
+# Master function to generate the scraper, scrape the results, then
+# format them.
+# Args:
+# None
+# Returns:
+# None
+# """
+# parsed_args = {"device": arguments["device"]}
+# if arguments.interface:
+# parsed_args["interface"] = arguments.interface
+# if arguments.route:
+# parsed_args["route"] = arguments.route
+# if arguments.mac_addr:
+# parsed_args["mac"] = arguments.mac_addr
+# if arguments.platform == "ios":
+# scraper_object = create_ios_scraper(parsed_args)
+# elif arguments.platform == "nxos":
+# scraper_object = create_nxos_scraper(parsed_args)
+# elif arguments.platform == "iosxr":
+# scraper_object = create_iosxr_scraper(parsed_args)
+# elif arguments.platform == "eos":
+# scraper_object = create_eos_scraper(parsed_args)
+# return scraper_object
 
 
 def main():

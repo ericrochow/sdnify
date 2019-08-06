@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import argparse
-import os
-from os.path import dirname, realpath
+
+# import os
+# from os.path import dirname, realpath
 
 import colorama
 
@@ -15,15 +16,15 @@ from termcolor import colored
 
 # import yaml
 
-from .platforms.arista_eos import EOS
-from .platforms.cisco_ios import IOS
-from .platforms.cisco_nxos import NXOS
-from .platforms.cisco_xe import IOSXE
-from .platforms.cisco_xr import IOSXR
-from .platforms.fortinet import FORTIOS
-from .platforms.juniper_junos import JUNOS
-from .platforms.paloalto_panos import PANOS
-from .platforms.platforms import Platform
+# from .platforms.arista_eos import EOS
+# from .platforms.cisco_ios import IOS
+# from .platforms.cisco_nxos import NXOS
+# from .platforms.cisco_xe import IOSXE
+# from .platforms.cisco_xr import IOSXR
+# from .platforms.fortinet import FORTIOS
+# from .platforms.juniper_junos import JUNOS
+# from .platforms.paloalto_panos import PANOS
+# from .platforms.platforms import Platform
 from ..__version__ import __version__
 
 
@@ -31,32 +32,10 @@ class Cli(object):
     """
     """
 
-    def __init__(
-        self, arguments, templates, commands, interface_name=None, address=None
-    ):
+    def __init__(self):
         """
         """
-        self.TEMPLATE_PATH = os.path.join(
-            dirname(realpath(__file__))
-            + "/fsm_templates/{}/".format(self.platform)
-        )
-
-        self.arguments = arguments
-        self.templates = templates
-        self.commands = commands
-        self.device_name = arguments["device_name"]
-        self.xcvr_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["xcvr"])
-        )
-        self.counters_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["counters"])
-        )
-        self.version_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["version"])
-        )
-        self.inventory_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["inventory"])
-        )
+        pass
 
     def colorize_tx_level(self, xcvr_details):
         """
@@ -389,7 +368,9 @@ class Cli(object):
             "-m",
             "--mac_addr",
             action="store",
-            help=("Return MAC address table information for a given MAC"
-                  " address.",
+            help=(
+                "Return MAC address table information for a given MAC"
+                " address."
+            ),
         )
         return parser.parse_args()
