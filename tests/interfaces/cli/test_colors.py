@@ -1,21 +1,7 @@
 # import pytest
 
 from sdnify.cli import Cli
-
-rx_details = {
-    "rx_warn_high": "10",
-    "rx_alarm_high": "20",
-    "rx_warn_low": "-10",
-    "rx_alarm_low": "-20",
-}
-
-
-tx_details = {
-    "tx_warn_high": "10",
-    "tx_alarm_high": "20",
-    "tx_warn_low": "-10",
-    "tx_alarm_low": "-20",
-}
+from ...seed_data import rx_details, tx_details
 
 
 def test_tx_colorization_warn():
