@@ -1,19 +1,13 @@
 #!/usr/bin/env python
 import argparse
 
-# import os
-# from os.path import dirname, realpath
-
 import colorama
-
-# from netmiko import ConnectHandler
 
 from prettytable import PrettyTable
 
 from termcolor import colored
 
-
-from .core import generate_scraper
+# from .core import generate_scraper
 from ..__version__ import __version__
 
 
@@ -282,7 +276,7 @@ class Cli(object):
         output = "\n"
         return output
 
-    def gather_and_format_details(self):
+    def gather_details(self):
         """
         Master method that runs the appropriate query and format methods.
 
@@ -291,24 +285,53 @@ class Cli(object):
         Returns:
           A multiline string containing the output ready to pring to console.
         """
+        results = self.gather_details(self)
         colorama.init()
-        valid_query = bool(self.interface_name or self.chassis or self.route)
-        if valid_query:
+        if not results["error"]:
+            interface_info = results.get("interface_info", default=None)
+            chassis_info = results.get("chassis_info", default=None)
+            route_info = results.get("route_info", default=None)
             output = "\n"
             output += ">" * 80
-        if self.interface_name:
-            interface = self.gather_interface_details()
-            output += self.format_interface_results(interface)
-        if self.chassis:
-            chassis_info = self.gather_chassis_details()
-            output += self.format_chassis_results(chassis_info)
-        if self.route:
-            route_info = self.gather_route_results()
-            output += self.format_route_results(route_info)
-        if valid_query:
+            if interface_info:
+                output += self.format_interface_results(interface_info)
+            if chassis_info:
+                output += self.format_chassis_results(chassis_info)
+            if route_info:
+                output += self.format_route_results(route_info)
             output += "<" * 80
             output += "\n"
+        else:
+            output = colored("EPIC FAIL", "red")
         return output
+
+    # def gather_and_format_details(self):
+    # """
+    # Master method that runs the appropriate query and format methods.
+
+    # Args:
+    # None
+    # Returns:
+    # A multiline string containing the output ready to pring to console.
+    # """
+    # colorama.init()
+    # valid_query = bool(self.interface_name or self.chassis or self.route)
+    # if valid_query:
+    # output = "\n"
+    # output += ">" * 80
+    # if self.interface_name:
+    # interface = self.gather_interface_details()
+    # output += self.format_interface_results(interface)
+    # if self.chassis:
+    # chassis_info = self.gather_chassis_details()
+    # output += self.format_chassis_results(chassis_info)
+    # if self.route:
+    # route_info = self.gather_route_results()
+    # output += self.format_route_results(route_info)
+    # if valid_query:
+    # output += "<" * 80
+    # output += "\n"
+    # return output
 
     def initialize_parser():
         """

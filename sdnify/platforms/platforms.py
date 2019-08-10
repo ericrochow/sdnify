@@ -3,7 +3,7 @@
 import os
 from os.path import dirname, realpath
 
-import colorama
+import requests
 
 from netmiko import ConnectHandler
 
@@ -13,16 +13,18 @@ from textfsm import TextFSM
 
 import yaml
 
-from ..interfaces import (
-    create_ios_scraper,
-    create_nxos_scraper,
-    create_iosxr_scraper,
-    create_eos_scraper,
-    initialize_parser,
-)
-
 
 class Platform(object):
+    """
+    """
+
+    def __init__(self, arguments):
+        """
+        """
+        self.arguments = arguments
+
+
+class SSHPlatform(Platform):
     """
     """
 
@@ -34,7 +36,7 @@ class Platform(object):
             + "/fsm_templates/{}/".format(self.platform)
         )
 
-        self.arguments = arguments
+        # self.arguments = arguments
         self.templates = templates
         self.commands = commands
         self.device_name = arguments["device_name"]
@@ -50,6 +52,7 @@ class Platform(object):
         self.inventory_template = open(
             os.path.join(self.TEMPLATE_PATH + self.templates["inventory"])
         )
+        super().__init__(self, arguments)
 
     def build_device(self):
         """
@@ -284,123 +287,111 @@ class Platform(object):
 
     def gather_details(self):
         """
-        Master method that runs the appropriate query and format methods.
+        Master method that runs all appropriate commands.
 
         Args:
           None
         Returns:
-          A multiline string containing the output ready to pring to console.
+          A dictionary containing the formatted results of the commands.
         """
-        colorama.init()
         valid_query = bool(self.interface_name or self.chassis or self.route)
+        results = {}
         if valid_query:
-            output = "\n"
-            output += ">" * 80
-        if self.interface_name:
-            interface = self.gather_interface_details()
-            output += self.format_interface_results(interface)
-        if self.chassis:
-            chassis_info = self.gather_chassis_details()
-            output += self.format_chassis_results(chassis_info)
-        if self.route:
-            route_info = self.gather_route_results()
-            output += self.format_route_results(route_info)
-        if valid_query:
-            output += "<" * 80
-            output += "\n"
-            return output
+            if self.interface_name:
+                results["interface_info"] = self.gather_interface_details()
+            if self.chassis:
+                results["chassis_info"] = self.gather_chassis_details()
+            if self.route:
+                results["route_info"] = self.gather_route_results()
+        else:
+            results["error"] = True
+        return results
 
 
-# def initialize_parser():
-# """
-# Builds an argument parser object.
-
-# Args:
-# None
-# Returns:
-# A parser object that contains the flags and options passed by the CLI.
-# """
-# desc = "Adds some unicorn dust to your networking!"
-# parser = argparse.ArgumentParser(description=desc, version=__version__)
-# parser.add_argument(
-# "device", action="store", help="The device which should be checked."
-# )
-# parser.add_argument(
-# "-p",
-# "--platform",
-# action="store",
-# default="ios",
-# choices=["ios", "nxos", "iosxr", "eos"],
-# help="The device platform (default ios).",
-# )
-# parser.add_argument(
-# "-i",
-# "--interface",
-# action="store",
-# help="Return the given interface's configuration and details.",
-# )
-# parser.add_argument(
-# "-c",
-# "--chassis-details",
-# action="store_true",
-# help="Return information about the chassis.",
-# )
-# parser.add_argument(
-# "-r",
-# "--routes",
-# action="store",
-# help="Return route(s) to a given IP address.",
-# )
-# return parser.parse_args()
-#
-#
-#
-#
-# def generate_scraper(arguments):
-# """
-# Master function to generate the scraper, scrape the results, then
-# format them.
-# Args:
-# None
-# Returns:
-# None
-# """
-# parsed_args = {"device": arguments["device"]}
-# if arguments.interface:
-# parsed_args["interface"] = arguments.interface
-# if arguments.route:
-# parsed_args["route"] = arguments.route
-# if arguments.mac_addr:
-# parsed_args["mac"] = arguments.mac_addr
-# if arguments.platform == "ios":
-# scraper_object = create_ios_scraper(parsed_args)
-# elif arguments.platform == "nxos":
-# scraper_object = create_nxos_scraper(parsed_args)
-# elif arguments.platform == "iosxr":
-# scraper_object = create_iosxr_scraper(parsed_args)
-# elif arguments.platform == "eos":
-# scraper_object = create_eos_scraper(parsed_args)
-# return scraper_object
-
-
-def main():
+class APIPlatform(Platform):
     """
-    Master function to generate the scraper, scrape the results, then format
-        them.
-
-    Args:
-      None
-    Returns:
-      None
     """
-    arguments = initialize_parser()
-    if arguments.platform == "ios":
-        scraper_object = create_ios_scraper(arguments)
-    elif arguments.platform == "nxos":
-        scraper_object = create_nxos_scraper(arguments)
-    elif arguments.platform == "iosxr":
-        scraper_object = create_iosxr_scraper(arguments)
-    elif arguments.platform == "eos":
-        scraper_object = create_eos_scraper(arguments)
-    output = scraper_object.gather_details()
-    print(output)
+
+    def __init__(self, arguments, filters, methods, **kwargs):
+
+        """
+        """
+        self.filters = filters
+        self.methods = methods
+        self.username = arguments.get("username", default=None)
+        self.password = arguments.get("password", default=None)
+        self.token = arguments.get("api_token", default=None)
+        self.base_url = arguments.get("base_url", default=None)
+        self.port = arguments.get("port", 443)
+        self.timeout = arguments.get("timeout", 30)
+        self.verify_cert = arguments.get("verify_cert", default=True)
+        self.raise_on_error = arguments.get("raise_on_error", default=True)
+        self.sess = requests.Session()
+        super().__init__(self, arguments)
+
+    def build_device(self):
+        """
+        """
+        pass
+
+    def _get(self, request, payload=None, raw_json=True):
+        """
+        Sends an HTTP GET request.
+
+        Args:
+          request: blah
+          payload: blah
+          raw_json: blah
+        Returns:
+          The results of the GET request.
+        """
+        # TODO: Find way of generating base URL
+        url = "{}/{}".format(self.base_url, request)
+        r = self.sess.get(
+            url,
+            params=payload,
+            headers=self.headers,
+            auth=self.creds,
+            timeout=self.timeout,
+            verify=self.verify,
+        )
+        if r.ok:
+            resp = r.json()
+            if raw_json:
+                return resp
+            else:
+                return r.text
+        else:
+            return r.raise_for_status()
+
+    def _post(self, request, data=None, payload=None, raw_json=None):
+        """
+        Sends an HTTP POST request.
+
+        Args:
+          request: blah
+          payload: blah
+          data: blah
+          raw_json: blah
+        Returns:
+          The results of the POST request.
+        """
+        # TODO: Add method of generating the base URL
+        url = "{}/{}".format(self.base_url, request)
+        r = self.sess.post(
+            url,
+            json=data,
+            payload=payload,
+            headers=self.headers,
+            auth=self.creds,
+            timeout=self.timeout,
+            verify=self.verify,
+        )
+        if r.ok:
+            resp = r.json()
+            if raw_json:
+                return resp
+            else:
+                return r.text
+        else:
+            return r.raise_for_status()
