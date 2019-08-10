@@ -12,19 +12,8 @@ from prettytable import PrettyTable
 
 from termcolor import colored
 
-# from textfsm import TextFSM
 
-# import yaml
-
-# from .platforms.arista_eos import EOS
-# from .platforms.cisco_ios import IOS
-# from .platforms.cisco_nxos import NXOS
-# from .platforms.cisco_xe import IOSXE
-# from .platforms.cisco_xr import IOSXR
-# from .platforms.fortinet import FORTIOS
-# from .platforms.juniper_junos import JUNOS
-# from .platforms.paloalto_panos import PANOS
-# from .platforms.platforms import Platform
+from .core import generate_scraper
 from ..__version__ import __version__
 
 
@@ -373,4 +362,5 @@ class Cli(object):
                 " address."
             ),
         )
-        return parser.parse_args()
+        arguments = parser.parse_args()
+        return vars(arguments)
