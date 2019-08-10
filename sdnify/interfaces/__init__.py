@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+"""
+Contains modules for sdnify interfaces.
+"""
+
+
 from .cli import initialize_parser
 from ..platforms.cisco_ios import IOS
 from ..platforms.cisco_nxos import NXOS

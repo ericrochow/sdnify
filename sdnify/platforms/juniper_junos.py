@@ -1,19 +1,25 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Juniper JunOS-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class JUNOS(Platform):
+class JUNOS(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Juniper JunOS platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
+        Instantiates an object of the Platform class with the appropriate options
+            for an Juniper JunOS device.
+
+        Args:
+          None
+        Returns:
+          An instantiated Platform object.
         """
         self.platform = "juniper_junos"
         self.templates = {

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Contains platform-independent methods to interact with network devices.
+"""
 # import argparse
 import os
 from os.path import dirname, realpath
@@ -16,6 +19,8 @@ import yaml
 
 class Platform(object):
     """
+    Platform parent class containing methods common to all platform
+        subcategories.
     """
 
     def __init__(self, arguments):
@@ -26,6 +31,9 @@ class Platform(object):
 
 class SSHPlatform(Platform):
     """
+    Platform class containing methods common to all platforms that use SSH
+        as the mechanism to interact with a network device. Methods and
+        attributes inherited from the Platform parent class.
     """
 
     def __init__(self, arguments, templates, commands):
@@ -310,6 +318,9 @@ class SSHPlatform(Platform):
 
 class APIPlatform(Platform):
     """
+    Platform class containing methods common to all platforms that use REST as
+        as the mechanism to interact with a network device. Methods and
+        attributes inherited from the Platform parent class.
     """
 
     def __init__(self, arguments, filters, methods, **kwargs):

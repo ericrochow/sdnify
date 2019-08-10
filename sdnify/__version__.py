@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+"""
+Contains variable definitions for documentation and packaging purposes.
+"""
 from datetime import datetime
 
 __author__ = "Eric Rochow"

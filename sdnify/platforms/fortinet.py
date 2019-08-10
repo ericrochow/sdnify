@@ -1,19 +1,25 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Fortinet FortiOS-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class FORTIOS(Platform):
+class FORTIOS(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Fortinet ForiOS platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
+        Instantiates an object of the Platform class with the appropriate options
+            for a Fortinet FortiOS device.
+
+        Args:
+          None
+        Returns:
+          An instantiated SSHPlatform object.
         """
         self.platform = "fortinet"
         self.templates = {

@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+"""
+Contains interface methods common to all interfaces.
+"""
+
 from .platforms.arista_eos import EOS
 from .platforms.cisco_ios import IOS
 from .platforms.cisco_nxos import NXOS

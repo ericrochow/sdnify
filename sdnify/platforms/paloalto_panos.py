@@ -1,20 +1,26 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Palo Alto PANOS-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class PANOS(Platform):
+class PANOS(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Palo Alto PANOS platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
-        """
+        Instantiates an object of the Platform class with the appropriate options
+            for an Palo Alto PANOS device.
+
+        Args:
+          None
+        Returns:
+          An instantiated SSHPlatform object.
+       """
         self.platform = "paloalto_panos"
 
         self.templates = {

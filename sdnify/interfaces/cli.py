@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Contains methods for use via the sdnify CLI.
+"""
 import argparse
 
 import colorama
