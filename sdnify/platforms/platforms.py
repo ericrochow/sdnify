@@ -9,21 +9,10 @@ from netmiko import ConnectHandler
 
 from prettytable import PrettyTable
 
-# from termcolor import colored
-
 from textfsm import TextFSM
 
 import yaml
 
-# from .arista_eos import EOS
-# from .cisco_ios import IOS
-# from .cisco_nxos import NXOS
-# from .cisco_xe import IOSXE
-# from .cisco_xr import IOSXR
-# from .fortinet import FORTIOS
-# from .juniper_junos import JUNOS
-# from .paloalto_panos import PANOS
-# from ..__version__ import __version__
 from ..interfaces import (
     create_ios_scraper,
     create_nxos_scraper,
@@ -190,89 +179,6 @@ class Platform(object):
         fsm_template = TextFSM(self.software_template)
         software_results = fsm_template.ParseText(output)[0]
         return software_results
-
-    def gather_interface_details(self):
-        """
-        Connects to the device to gather information about a given interface.
-
-        Args:
-          None
-        Returns:
-          A dict containing the configuration, counters, statistics, and
-              thresholds for the specified interface.
-        """
-        self.device = self.build_device()
-        config_results = self.config()
-        counters_results = self.counters()
-        xcvr_results = self.transceiver()
-        details = {}
-        if config_results:
-            config_details = {"config": True, "config_results": config_results}
-        else:
-            config_details = {"config": False}
-        details = {**details, **config_details}
-        if counters_results:
-            counters_details = {
-                "counters": True,
-                "interface_name": counters_results[0],
-                "state": "{}/{}".format(
-                    counters_results[1], counters_results[2]
-                ),
-                "hardware_type": counters_results[3],
-                "mac": counters_results[4],
-                "mtu": counters_results[5],
-                "duplex": counters_results[6],
-                "speed": counters_results[7],
-                "bandwidth": counters_results[8],
-                "encapsulation": counters_results[9],
-                "input_rate": counters_results[10],
-                "output_rate": counters_results[11],
-                "input_errors": counters_results[12],
-                "output_errors": counters_results[13],
-            }
-            counters_details["input_errors"] = self.colorize_in_errors(
-                counters_details
-            )
-            counters_details["output_errors"] = self.colorize_out_errors(
-                counters_details
-            )
-        else:
-            counters_details = {"counters": False}
-        details = {**details, **counters_details}
-        if xcvr_results:
-            xcvr_details = {
-                "xcvr": True,
-                "temperature_current": xcvr_results[1],
-                "temperature_alarm_high": xcvr_results[2],
-                "temperature_alarm_low": xcvr_results[3],
-                "temperature_warn_high": xcvr_results[4],
-                "temperature_warn_low": xcvr_results[5],
-                "voltage_current": xcvr_results[6],
-                "voltage_alarm_high": xcvr_results[7],
-                "voltage_alarm_low": xcvr_results[8],
-                "voltage_warn_high": xcvr_results[9],
-                "voltage_warn_low": xcvr_results[10],
-                "tx_current": xcvr_results[11],
-                "tx_alarm_high": xcvr_results[12],
-                "tx_alarm_low": xcvr_results[13],
-                "tx_warn_high": xcvr_results[14],
-                "tx_warn_low": xcvr_results[15],
-                "rx_current": xcvr_results[16],
-                "rx_alarm_high": xcvr_results[17],
-                "rx_alarm_low": xcvr_results[18],
-                "rx_warn_high": xcvr_results[19],
-                "rx_warn_low": xcvr_results[20],
-            }
-            xcvr_details["xcvr_rx_level"] = self.colorize_rx_level(
-                xcvr_details
-            )
-            xcvr_details["xcvr_tx_level"] = self.colorize_tx_level(
-                xcvr_details
-            )
-        else:
-            xcvr_details = {"xcvr": False}
-        details = {**details, **xcvr_details}
-        return details
 
     @staticmethod
     def format_interface_results(details):
@@ -448,104 +354,6 @@ class Platform(object):
 # return parser.parse_args()
 #
 #
-# def create_ios_scraper(arguments):
-# """
-# Generates a screen scraper object.
-#
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = IOS(arguments)
-# return scraper_object
-#
-#
-# def create_nxos_scraper(arguments):
-# """
-# Generates a screen scraper object.
-#
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = NXOS(arguments)
-# return scraper_object
-#
-#
-# def create_iosxr_scraper(arguments):
-# """
-# Generates a screen scraper object.
-#
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = IOSXR(arguments)
-# return scraper_object
-#
-#
-# def create_iosxe_scraper(arguments):
-# """
-# Generates a screen scraper object.
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = IOSXE(arguments)
-# return scraper_object
-#
-#
-# def create_eos_scraper(arguments):
-# """
-# Generates a screen scraper object.
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = EOS(arguments)
-# return scraper_object
-#
-#
-# def create_panos_scraper(arguments):
-# """
-# Generates a screen scraper object.
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = PANOS(arguments)
-# return scraper_object
-#
-#
-# def create_junos_scraper(arguments):
-# """
-# Generates a screen scraper object.
-#
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = JUNOS(arguments)
-# return scraper_object
-#
-#
-# def create_foritos_scraper(arguments):
-# """
-# Generates a screen scraper object.
-# Args:
-# arguments: An argparse-formatted dictionary
-# Returns:
-# A screen scraping object.
-# """
-# scraper_object = FORTIOS(arguments)
-# return scraper_object
 #
 #
 # def generate_scraper(arguments):
