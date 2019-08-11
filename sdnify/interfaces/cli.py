@@ -23,7 +23,8 @@ class Cli(object):
         """
         pass
 
-    def colorize_tx_level(self, xcvr_details):
+    @staticmethod
+    def colorize_tx_level(xcvr_details):
         """
         Colorizes the optical Tx levels based on the current value and the
             warn/alarm thresholds.
@@ -34,7 +35,14 @@ class Cli(object):
         Returns:
           A colorized string containing the current Tx level.
         """
-        if float(xcvr_details["tx_current"]) > float(
+        if not (
+            xcvr_details["tx_alarm_high"]
+            or xcvr_details["tx_alarm_low"]
+            or xcvr_details["tx_warn_high"]
+            or xcvr_details["tx_warn_low"]
+        ):
+            tx_value = xcvr_details["tx_current"]
+        elif float(xcvr_details["tx_current"]) > float(
             xcvr_details["tx_alarm_high"]
         ) or float(xcvr_details["tx_current"]) < float(
             xcvr_details["tx_alarm_low"]
@@ -50,7 +58,8 @@ class Cli(object):
             tx_value = colored(xcvr_details["tx_current"], "green")
         return tx_value
 
-    def colorize_rx_level(self, xcvr_details):
+    @staticmethod
+    def colorize_rx_level(xcvr_details):
         """
         Colorizes the optical Rx levels based on the current value and the
             warn/alarm thresholds.
@@ -73,7 +82,7 @@ class Cli(object):
         ) or float(xcvr_details["rx_current"]) < float(
             xcvr_details["rx_alarm_low"]
         ):
-            rx_value = colored(["rx_current"], "red")
+            rx_value = colored(xcvr_details["rx_current"], "red")
         elif float(xcvr_details["rx_current"]) > float(
             xcvr_details["rx_warn_high"]
         ) or float(xcvr_details["rx_current"]) < float(
@@ -84,7 +93,8 @@ class Cli(object):
             rx_value = colored(xcvr_details["rx_current"], "green")
         return rx_value
 
-    def colorize_in_errors(self, counters_details):
+    @staticmethod
+    def colorize_in_errors(counters_details):
         """
         Colorizes the input errors value in the event of a non-zero value.
 
@@ -99,7 +109,8 @@ class Cli(object):
             counter = counters_details["input_errors"]
         return counter
 
-    def colorize_out_errors(self, counters_details):
+    @staticmethod
+    def colorize_out_errors(counters_details):
         """
         Colorizes the output errors value in the event of a non-zero value.
 
@@ -114,7 +125,8 @@ class Cli(object):
             counter = counters_details["output_errors"]
         return counter
 
-    def colorize_temperature(self, temperature):
+    @staticmethod
+    def colorize_temperature(temperature):
         """
         Colorizes the temperature value based on threshold values.
 
@@ -143,7 +155,8 @@ class Cli(object):
             temperature_str = colored(temperature[""], "green")
         return temperature_str
 
-    def colorize_voltage(self, voltage):
+    @staticmethod
+    def colorize_voltage(voltage):
         """
         Colorizes the voltage value based on threshold values.
 
@@ -166,7 +179,8 @@ class Cli(object):
             voltage_str = colored(voltage[""], "green")
         return voltage_str
 
-    def colorize_amperage(self, amps):
+    @staticmethod
+    def colorize_amperage(amps):
         """
         Colorizes the current/amp value based on the threshold values.
 
@@ -244,7 +258,8 @@ class Cli(object):
             output += "\n"
         return output
 
-    def format_chassis_results(self, chassis_info):
+    @staticmethod
+    def format_chassis_results(chassis_info):
         """
         Formats the results of the gather_chassis_details method into a
             multiline string.
@@ -265,7 +280,8 @@ class Cli(object):
         )
         return output
 
-    def format_route_results(self, route):
+    @staticmethod
+    def format_route_results(route):
         """
         Formats the results of the gather_route_results method into a multiline
             string.
@@ -336,6 +352,7 @@ class Cli(object):
     # output += "\n"
     # return output
 
+    @staticmethod
     def initialize_parser():
         """
         Builds an argument parser object.
