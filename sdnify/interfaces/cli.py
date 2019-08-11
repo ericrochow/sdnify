@@ -11,7 +11,7 @@ from prettytable import PrettyTable
 from termcolor import colored
 
 # from .core import generate_scraper
-from ..__version__ import __version__
+from sdnify.__version__ import __version__
 
 
 class Cli(object):

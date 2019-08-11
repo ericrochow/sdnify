@@ -1,7 +1,12 @@
 # import pytest
 
-from sdnify.cli import Cli
-from ...seed_data import rx_details, tx_details
+from sdnify.interfaces.cli import Cli
+from ...seed_data.parsed_output.interface_data import (
+    rx_details,
+    tx_details,
+    # xcvr_details,
+    counters_details,
+)
 
 
 def test_tx_colorization_warn():

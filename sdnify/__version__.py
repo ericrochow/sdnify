@@ -13,9 +13,10 @@ __description__ = (
 )
 __title__ = "sdnify"
 # __version__ = find_current_version()
+__version__ = "19.08.11"
 __github_username__ = "ericrochow"
 __github_repo__ = __title__
-__github_path__ = "{}/{}".format()
+__github_path__ = "{}/{}".format(__github_username__, __github_repo__)
 __github_url__ = "https://github.com/{}".format(__github_path__)
 __url__ = __github_url__
 __urls__ = {

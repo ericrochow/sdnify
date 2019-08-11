@@ -12,3 +12,7 @@ tx_details = {
     "tx_warn_low": "-10",
     "tx_alarm_low": "-20",
 }
+
+xcvr_details = {}
+
+counters_details = {}
