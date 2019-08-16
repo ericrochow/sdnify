@@ -137,19 +137,33 @@ class Cli(object):
           A colorized string containing the temperature.
         """
         if not (
-            temperature[""]
-            or temperature[""]
-            or temperature[""]
-            or temperature[""]
+            temperature["temperature_alarm_high"]
+            or temperature["temperature_alarm_low"]
+            or temperature["temperature_warn_high"]
+            or temperature["temperature_warn_low"]
         ):
-            temperature_str = temperature[""]
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "red")
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "orange")
-        elif float(temperature[""]) < float(temperature[""]):
-            temperature_str = colored(temperature[""], "blue")
-        elif float(temperature[""]) < float(temperature[""]):
+            temperature_str = temperature["temperature_current"]
+        elif float(temperature["temperature_current"]) > float(
+            temperature["temperature_alarm_high"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "red"
+            )
+        elif float(temperature["temperature_current"]) > float(
+            temperature["temperature_warn_high"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "orange"
+            )
+        elif float(temperature["temperature_current"]) < float(
+            temperature["temperature_warn_low"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "blue"
+            )
+        elif float(temperature["temperature_current"]) < float(
+            temperature["temperature_alarm_low"]
+        ):
             temperature_str = colored(temperature[""], "cyan")
         else:
             temperature_str = colored(temperature[""], "green")
@@ -165,18 +179,31 @@ class Cli(object):
         Returns:
           A colorized string containing the voltage.
         """
-        if not (voltage[""] or voltage[""] or voltage[""] or voltage[""]):
-            voltage_str = voltage[""]
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
+        if not (
+            voltage["voltage_alarm_high"]
+            or voltage["alarm_warn_high"]
+            or voltage["voltage_warn_low"]
+            or voltage["voltage_alarm_low"]
+        ):
+            voltage_str = voltage["voltage_current"]
+        elif (
+            float(voltage["voltage_current"])
+            > float(voltage["voltage_alarm_high"])
+        ) or (
+            float(voltage["voltage_current"])
+            < float(voltage["voltage_alarm_low"])
         ):
             voltage_str = colored(voltage[""], "red")
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
+        elif (
+            float(voltage["voltage_current"])
+            > float(voltage["voltage_warn_high"])
+        ) or (
+            float(voltage["voltage_current"])
+            < float(voltage["voltage_warn_low"])
         ):
-            voltage_str = colored(voltage[""], "yellow")
+            voltage_str = colored(voltage["voltage_current"], "yellow")
         else:
-            voltage_str = colored(voltage[""], "green")
+            voltage_str = colored(voltage["voltage_current"], "green")
         return voltage_str
 
     @staticmethod
@@ -189,7 +216,24 @@ class Cli(object):
         Returns:
           A colorized string containing the current/amperage.
         """
-        pass
+        if not (
+            amps["_alarm_high"]
+            or amps["_warn_high"]
+            or amps["_alarm_low"]
+            or amps["_alarm_low"]
+        ):
+            amps_str = amps["_current"]
+        elif (float(amps["_current"]) > float(amps["_alarm_high"])) or (
+            float(amps["_current"]) < float(amps["_alarm_low"])
+        ):
+            amps_str = colored(amps["_current"], "red")
+        elif (float(amps["_current"]) > float(amps["_warn_high"])) or (
+            float(amps["_current"]) < float(amps["_warn_low"])
+        ):
+            amps_str = colored(amps["_current"], "yellow")
+        else:
+            amps_str = colored(amps["_current"], "green")
+        return amps_str
 
     @staticmethod
     def format_interface_results(details):
