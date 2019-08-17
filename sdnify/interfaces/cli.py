@@ -103,7 +103,7 @@ class Cli(object):
         Returns:
           A colorized string containing the number of input errors.
         """
-        if int(counters_details["input_errors"]) > 0:
+        if float(counters_details["input_errors"]) > 0:
             counter = colored(counters_details["input_errors"], "red")
         else:
             counter = counters_details["input_errors"]
@@ -119,7 +119,7 @@ class Cli(object):
         Returns:
           A colorized string containing the number of input errors.
         """
-        if int(counters_details["output_errors"]) > 0:
+        if float(counters_details["output_errors"]) > 0:
             counter = colored(counters_details["output_errors"], "red")
         else:
             counter = counters_details["output_errors"]
@@ -153,7 +153,7 @@ class Cli(object):
             temperature["temperature_warn_high"]
         ):
             temperature_str = colored(
-                temperature["temperature_current"], "orange"
+                temperature["temperature_current"], "yellow"
             )
         elif float(temperature["temperature_current"]) < float(
             temperature["temperature_warn_low"]
@@ -164,9 +164,13 @@ class Cli(object):
         elif float(temperature["temperature_current"]) < float(
             temperature["temperature_alarm_low"]
         ):
-            temperature_str = colored(temperature[""], "cyan")
+            temperature_str = colored(
+                temperature["temperature_current"], "cyan"
+            )
         else:
-            temperature_str = colored(temperature[""], "green")
+            temperature_str = colored(
+                temperature["temperature_current"], "green"
+            )
         return temperature_str
 
     @staticmethod
@@ -181,7 +185,7 @@ class Cli(object):
         """
         if not (
             voltage["voltage_alarm_high"]
-            or voltage["alarm_warn_high"]
+            or voltage["voltage_warn_high"]
             or voltage["voltage_warn_low"]
             or voltage["voltage_alarm_low"]
         ):
@@ -193,7 +197,7 @@ class Cli(object):
             float(voltage["voltage_current"])
             < float(voltage["voltage_alarm_low"])
         ):
-            voltage_str = colored(voltage[""], "red")
+            voltage_str = colored(voltage["voltage_current"], "red")
         elif (
             float(voltage["voltage_current"])
             > float(voltage["voltage_warn_high"])
