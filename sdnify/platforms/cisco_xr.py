@@ -1,19 +1,25 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Cisco IOS-XE-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class IOSXR(Platform):
+class IOSXR(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for a Cisco IOS-XR device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Cisco IOS-XR platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
+        Instantiates an object of the Platform class with the appropriate options
+            for a Cisco IOS-XR device.
+
+        Args:
+          None
+        Returns:
+          An instantiated SSHPlatform object.
         """
         self.platform = "cisco_xr"
         self.templates = {

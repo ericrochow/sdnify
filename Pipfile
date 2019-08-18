@@ -11,7 +11,7 @@ netmiko = "*"
 PTable = "*"
 PyYAML = "*"
 termcolor = "*"
-
+tablib = {extras = ["pandas"],version = "*"}
 
 [dev-packages]
 codecov = "*"

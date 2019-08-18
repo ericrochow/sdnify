@@ -1,33 +1,39 @@
 #!/usr/bin/env python
-import argparse
+"""
+Contains platform-independent methods to interact with network devices.
+"""
+# import argparse
 import os
 from os.path import dirname, realpath
 
-import colorama
+import requests
 
 from netmiko import ConnectHandler
 
 from prettytable import PrettyTable
 
-from termcolor import colored
-
 from textfsm import TextFSM
 
 import yaml
 
-from .arista_eos import EOS
-from .cisco_ios import IOS
-from .cisco_nxos import NXOS
-from .cisco_xe import IOSXE
-from .cisco_xr import IOSXR
-from .fortinet import FORTIOS
-from .juniper_junos import JUNOS
-from .paloalto_panos import PANOS
-from ..__version__ import __version__
-
 
 class Platform(object):
     """
+    Platform parent class containing methods common to all platform
+        subcategories.
+    """
+
+    def __init__(self, arguments):
+        """
+        """
+        self.arguments = arguments
+
+
+class SSHPlatform(Platform):
+    """
+    Platform class containing methods common to all platforms that use SSH
+        as the mechanism to interact with a network device. Methods and
+        attributes inherited from the Platform parent class.
     """
 
     def __init__(self, arguments, templates, commands):
@@ -38,7 +44,7 @@ class Platform(object):
             + "/fsm_templates/{}/".format(self.platform)
         )
 
-        self.arguments = arguments
+        # self.arguments = arguments
         self.templates = templates
         self.commands = commands
         self.device_name = arguments["device_name"]
@@ -54,6 +60,7 @@ class Platform(object):
         self.inventory_template = open(
             os.path.join(self.TEMPLATE_PATH + self.templates["inventory"])
         )
+        super().__init__(self, arguments)
 
     def build_device(self):
         """
@@ -184,89 +191,6 @@ class Platform(object):
         software_results = fsm_template.ParseText(output)[0]
         return software_results
 
-    def gather_interface_details(self):
-        """
-        Connects to the device to gather information about a given interface.
-
-        Args:
-          None
-        Returns:
-          A dict containing the configuration, counters, statistics, and
-              thresholds for the specified interface.
-        """
-        self.device = self.build_device()
-        config_results = self.config()
-        counters_results = self.counters()
-        xcvr_results = self.transceiver()
-        details = {}
-        if config_results:
-            config_details = {"config": True, "config_results": config_results}
-        else:
-            config_details = {"config": False}
-        details = {**details, **config_details}
-        if counters_results:
-            counters_details = {
-                "counters": True,
-                "interface_name": counters_results[0],
-                "state": "{}/{}".format(
-                    counters_results[1], counters_results[2]
-                ),
-                "hardware_type": counters_results[3],
-                "mac": counters_results[4],
-                "mtu": counters_results[5],
-                "duplex": counters_results[6],
-                "speed": counters_results[7],
-                "bandwidth": counters_results[8],
-                "encapsulation": counters_results[9],
-                "input_rate": counters_results[10],
-                "output_rate": counters_results[11],
-                "input_errors": counters_results[12],
-                "output_errors": counters_results[13],
-            }
-            counters_details["input_errors"] = self.colorize_in_errors(
-                counters_details
-            )
-            counters_details["output_errors"] = self.colorize_out_errors(
-                counters_details
-            )
-        else:
-            counters_details = {"counters": False}
-        details = {**details, **counters_details}
-        if xcvr_results:
-            xcvr_details = {
-                "xcvr": True,
-                "temperature_current": xcvr_results[1],
-                "temperature_alarm_high": xcvr_results[2],
-                "temperature_alarm_low": xcvr_results[3],
-                "temperature_warn_high": xcvr_results[4],
-                "temperature_warn_low": xcvr_results[5],
-                "voltage_current": xcvr_results[6],
-                "voltage_alarm_high": xcvr_results[7],
-                "voltage_alarm_low": xcvr_results[8],
-                "voltage_warn_high": xcvr_results[9],
-                "voltage_warn_low": xcvr_results[10],
-                "tx_current": xcvr_results[11],
-                "tx_alarm_high": xcvr_results[12],
-                "tx_alarm_low": xcvr_results[13],
-                "tx_warn_high": xcvr_results[14],
-                "tx_warn_low": xcvr_results[15],
-                "rx_current": xcvr_results[16],
-                "rx_alarm_high": xcvr_results[17],
-                "rx_alarm_low": xcvr_results[18],
-                "rx_warn_high": xcvr_results[19],
-                "rx_warn_low": xcvr_results[20],
-            }
-            xcvr_details["xcvr_rx_level"] = self.colorize_rx_level(
-                xcvr_details
-            )
-            xcvr_details["xcvr_tx_level"] = self.colorize_tx_level(
-                xcvr_details
-            )
-        else:
-            xcvr_details = {"xcvr": False}
-        details = {**details, **xcvr_details}
-        return details
-
     @staticmethod
     def format_interface_results(details):
         """
@@ -371,350 +295,114 @@ class Platform(object):
 
     def gather_details(self):
         """
-        Master method that runs the appropriate query and format methods.
+        Master method that runs all appropriate commands.
 
         Args:
           None
         Returns:
-          A multiline string containing the output ready to pring to console.
+          A dictionary containing the formatted results of the commands.
         """
-        colorama.init()
         valid_query = bool(self.interface_name or self.chassis or self.route)
+        results = {}
         if valid_query:
-            output = "\n"
-            output += ">" * 80
-        if self.interface_name:
-            interface = self.gather_interface_details()
-            output += self.format_interface_results(interface)
-        if self.chassis:
-            chassis_info = self.gather_chassis_details()
-            output += self.format_chassis_results(chassis_info)
-        if self.route:
-            route_info = self.gather_route_results()
-            output += self.format_route_results(route_info)
-        if valid_query:
-            output += "<" * 80
-            output += "\n"
-            return output
+            if self.interface_name:
+                results["interface_info"] = self.gather_interface_details()
+            if self.chassis:
+                results["chassis_info"] = self.gather_chassis_details()
+            if self.route:
+                results["route_info"] = self.gather_route_results()
+        else:
+            results["error"] = True
+        return results
 
-       def create_ios_scraper(arguments):
+
+class APIPlatform(Platform):
+    """
+    Platform class containing methods common to all platforms that use REST as
+        as the mechanism to interact with a network device. Methods and
+        attributes inherited from the Platform parent class.
+    """
+
+    def __init__(self, arguments, filters, methods, **kwargs):
+
         """
-        Generates a screen scraper object.
+        """
+        self.filters = filters
+        self.methods = methods
+        self.username = arguments.get("username", default=None)
+        self.password = arguments.get("password", default=None)
+        self.token = arguments.get("api_token", default=None)
+        self.base_url = arguments.get("base_url", default=None)
+        self.port = arguments.get("port", 443)
+        self.timeout = arguments.get("timeout", 30)
+        self.verify_cert = arguments.get("verify_cert", default=True)
+        self.raise_on_error = arguments.get("raise_on_error", default=True)
+        self.sess = requests.Session()
+        super().__init__(self, arguments)
+
+    def build_device(self):
+        """
+        """
+        pass
+
+    def _get(self, request, payload=None, raw_json=True):
+        """
+        Sends an HTTP GET request.
 
         Args:
-          arguments: An argparse-formatted dictionary
+          request: blah
+          payload: blah
+          raw_json: blah
         Returns:
-          A screen scraping object.
+          The results of the GET request.
         """
-        scraper_object = IOS(arguments)
-        return scraper_object
+        # TODO: Find way of generating base URL
+        url = "{}/{}".format(self.base_url, request)
+        r = self.sess.get(
+            url,
+            params=payload,
+            headers=self.headers,
+            auth=self.creds,
+            timeout=self.timeout,
+            verify=self.verify,
+        )
+        if r.ok:
+            resp = r.json()
+            if raw_json:
+                return resp
+            else:
+                return r.text
+        else:
+            return r.raise_for_status()
 
-    def create_nxos_scraper(arguments):
+    def _post(self, request, data=None, payload=None, raw_json=None):
         """
-        Generates a screen scraper object.
+        Sends an HTTP POST request.
 
         Args:
-          arguments: An argparse-formatted dictionary
+          request: blah
+          payload: blah
+          data: blah
+          raw_json: blah
         Returns:
-          A screen scraping object.
+          The results of the POST request.
         """
-        scraper_object = NXOS(arguments)
-        return scraper_object
-
-    def create_iosxr_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = IOSXR(arguments)
-        return scraper_object
-
-    def create_iosxe_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = IOSXE(arguments)
-        return scraper_object
-
-    def create_eos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = EOS(arguments)
-        return scraper_object
-
-    def create_panos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = PANOS(arguments)
-        return scraper_object
-
-    def create_junos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = JUNOS(arguments)
-        return scraper_object
-
-    def create_foritos_scraper(arguments):
-        """
-        Generates a screen scraper object.
-
-        Args:
-          arguments: An argparse-formatted dictionary
-        Returns:
-          A screen scraping object.
-        """
-        scraper_object = FORTIOS(arguments)
-        return scraper_object
-
-
-    def generate_scraper():
-        """
-        Master function to generate the scraper, scrape the results, then
-            format them.
-
-        Args:
-          None
-        Returns:
-          None
-        """
-        arguments = initialize_parser()
-            parsed_args = {"device": device}
-        if arguments.interface:
-            parsed_args["interface"] = arguments.interface
-        if arguments.route:
-            parsed_args["route"] = arguments.route
-        if arguments.mac_addr:
-            parsed_args["mac"] = arguments.mac_addr
-        if arguments.platform == "ios":
-            scraper_object = create_ios_scraper(parsed_args)
-        elif arguments.platform == "nxos":
-            scraper_object = create_nxos_scraper(parsed_args)
-        elif arguments.platform == "iosxr":
-            scraper_object = create_iosxr_scraper(parsed_args)
-        elif arguments.platform == "eos":
-            scraper_object = create_eos_scraper(parsed_args)
-        return scraper_object
-
-
-
-
-def initialize_parser():
-    """
-    Builds an argument parser object.
-
-    Args:
-      None
-    Returns:
-      A parser object that contains the flags and options passed by the CLI.
-    """
-    desc = "Adds some unicorn dust to your networking!"
-    parser = argparse.ArgumentParser(description=desc, version=__version__)
-    parser.add_argument(
-        "device", action="store", help="The device which should be checked."
-    )
-    parser.add_argument(
-        "-p",
-        "--platform",
-        action="store",
-        default="ios",
-        choices=["ios", "nxos", "iosxr", "eos"],
-        help="The device platform (default ios).",
-    )
-    parser.add_argument(
-        "-i",
-        "--interface",
-        action="store",
-        help="Return the given interface's configuration and details.",
-    )
-    parser.add_argument(
-        "-c",
-        "--chassis-details",
-        action="store_true",
-        help="Return information about the chassis.",
-    )
-    parser.add_argument(
-        "-r",
-        "--routes",
-        action="store",
-        help="Return route(s) to a given IP address.",
-    )
-    return parser.parse_args()
-
-
-def create_ios_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOS(arguments)
-    return scraper_object
-
-
-def create_nxos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = NXOS(arguments)
-    return scraper_object
-
-
-def create_iosxr_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-       arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXR(arguments)
-    return scraper_object
-
-
-def create_iosxe_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = IOSXE(arguments)
-    return scraper_object
-
-
-def create_eos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = EOS(arguments)
-    return scraper_object
-
-
-def create_panos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-        """
-    scraper_object = PANOS(arguments)
-    return scraper_object
-
-
-def create_junos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = JUNOS(arguments)
-    return scraper_object
-
-
-def create_foritos_scraper(arguments):
-    """
-    Generates a screen scraper object.
-    Args:
-      arguments: An argparse-formatted dictionary
-    Returns:
-      A screen scraping object.
-    """
-    scraper_object = FORTIOS(arguments)
-    return scraper_object
-
-
-def generate_scraper(arguments):
-    """
-    Master function to generate the scraper, scrape the results, then
-      format them.
-    Args:
-      None
-    Returns:
-      None
-    """
-    parsed_args = {"device": arguments["device"]}
-    if arguments.interface:
-        parsed_args["interface"] = arguments.interface
-    if arguments.route:
-        parsed_args["route"] = arguments.route
-    if arguments.mac_addr:
-        parsed_args["mac"] = arguments.mac_addr
-    if arguments.platform == "ios":
-        scraper_object = create_ios_scraper(parsed_args)
-    elif arguments.platform == "nxos":
-        scraper_object = create_nxos_scraper(parsed_args)
-    elif arguments.platform == "iosxr":
-        scraper_object = create_iosxr_scraper(parsed_args)
-    elif arguments.platform == "eos":
-        scraper_object = create_eos_scraper(parsed_args)
-    return scraper_object
-
-
-
-
-def main():
-    """
-    Master function to generate the scraper, scrape the results, then format
-        them.
-
-    Args:
-      None
-    Returns:
-      None
-    """
-    arguments = initialize_parser()
-    if arguments.platform == "ios":
-        scraper_object = create_ios_scraper(arguments)
-    elif arguments.platform == "nxos":
-        scraper_object = create_nxos_scraper(arguments)
-    elif arguments.platform == "iosxr":
-        scraper_object = create_iosxr_scraper(arguments)
-    elif arguments.platform == "eos":
-        scraper_object = create_eos_scraper(arguments)
-    output = scraper_object.gather_details()
-    print(output)
+        # TODO: Add method of generating the base URL
+        url = "{}/{}".format(self.base_url, request)
+        r = self.sess.post(
+            url,
+            json=data,
+            payload=payload,
+            headers=self.headers,
+            auth=self.creds,
+            timeout=self.timeout,
+            verify=self.verify,
+        )
+        if r.ok:
+            resp = r.json()
+            if raw_json:
+                return resp
+            else:
+                return r.text
+        else:
+            return r.raise_for_status()

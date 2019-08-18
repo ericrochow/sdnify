@@ -1,19 +1,25 @@
-from .platforms import Platform
+#!/usr/bin/env python
+"""
+Contains Arista EOS-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class EOS(Platform):
+class EOS(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for an Arista EOS device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Arista EOS platform. Methods and
+        attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
+        Instantiates an object of the Platform class with the appropriate options
+            for an Arista EOS device.
+
+        Args:
+          None
+        Returns:
+          An instantiated Platform object.
         """
         arguments = {"device_name": kwargs["device"]}
         if "interface" in kwargs:

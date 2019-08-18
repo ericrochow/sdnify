@@ -1,64 +1,30 @@
 #!/usr/bin/env python
+"""
+Contains methods for use via the sdnify CLI.
+"""
 import argparse
-import os
-from os.path import dirname, realpath
 
 import colorama
-
-# from netmiko import ConnectHandler
 
 from prettytable import PrettyTable
 
 from termcolor import colored
 
-# from textfsm import TextFSM
-
-# import yaml
-
-from .platforms.arista_eos import EOS
-from .platforms.cisco_ios import IOS
-from .platforms.cisco_nxos import NXOS
-from .platforms.cisco_xe import IOSXE
-from .platforms.cisco_xr import IOSXR
-from .platforms.fortinet import FORTIOS
-from .platforms.juniper_junos import JUNOS
-from .platforms.paloalto_panos import PANOS
-from .platforms.platforms import Platform
-from ..__version__ import __version__
+# from .core import generate_scraper
+from sdnify.__version__ import __version__
 
 
 class Cli(object):
     """
     """
 
-    def __init__(
-        self, arguments, templates, commands, interface_name=None, address=None
-    ):
+    def __init__(self):
         """
         """
-        self.TEMPLATE_PATH = os.path.join(
-            dirname(realpath(__file__))
-            + "/fsm_templates/{}/".format(self.platform)
-        )
+        pass
 
-        self.arguments = arguments
-        self.templates = templates
-        self.commands = commands
-        self.device_name = arguments["device_name"]
-        self.xcvr_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["xcvr"])
-        )
-        self.counters_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["counters"])
-        )
-        self.version_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["version"])
-        )
-        self.inventory_template = open(
-            os.path.join(self.TEMPLATE_PATH + self.templates["inventory"])
-        )
-
-    def colorize_tx_level(self, xcvr_details):
+    @staticmethod
+    def colorize_tx_level(xcvr_details):
         """
         Colorizes the optical Tx levels based on the current value and the
             warn/alarm thresholds.
@@ -69,7 +35,14 @@ class Cli(object):
         Returns:
           A colorized string containing the current Tx level.
         """
-        if float(xcvr_details["tx_current"]) > float(
+        if not (
+            xcvr_details["tx_alarm_high"]
+            or xcvr_details["tx_alarm_low"]
+            or xcvr_details["tx_warn_high"]
+            or xcvr_details["tx_warn_low"]
+        ):
+            tx_value = xcvr_details["tx_current"]
+        elif float(xcvr_details["tx_current"]) > float(
             xcvr_details["tx_alarm_high"]
         ) or float(xcvr_details["tx_current"]) < float(
             xcvr_details["tx_alarm_low"]
@@ -85,7 +58,8 @@ class Cli(object):
             tx_value = colored(xcvr_details["tx_current"], "green")
         return tx_value
 
-    def colorize_rx_level(self, xcvr_details):
+    @staticmethod
+    def colorize_rx_level(xcvr_details):
         """
         Colorizes the optical Rx levels based on the current value and the
             warn/alarm thresholds.
@@ -108,7 +82,7 @@ class Cli(object):
         ) or float(xcvr_details["rx_current"]) < float(
             xcvr_details["rx_alarm_low"]
         ):
-            rx_value = colored(["rx_current"], "red")
+            rx_value = colored(xcvr_details["rx_current"], "red")
         elif float(xcvr_details["rx_current"]) > float(
             xcvr_details["rx_warn_high"]
         ) or float(xcvr_details["rx_current"]) < float(
@@ -119,7 +93,8 @@ class Cli(object):
             rx_value = colored(xcvr_details["rx_current"], "green")
         return rx_value
 
-    def colorize_in_errors(self, counters_details):
+    @staticmethod
+    def colorize_in_errors(counters_details):
         """
         Colorizes the input errors value in the event of a non-zero value.
 
@@ -128,13 +103,14 @@ class Cli(object):
         Returns:
           A colorized string containing the number of input errors.
         """
-        if int(counters_details["input_errors"]) > 0:
+        if float(counters_details["input_errors"]) > 0:
             counter = colored(counters_details["input_errors"], "red")
         else:
             counter = counters_details["input_errors"]
         return counter
 
-    def colorize_out_errors(self, counters_details):
+    @staticmethod
+    def colorize_out_errors(counters_details):
         """
         Colorizes the output errors value in the event of a non-zero value.
 
@@ -143,13 +119,14 @@ class Cli(object):
         Returns:
           A colorized string containing the number of input errors.
         """
-        if int(counters_details["output_errors"]) > 0:
+        if float(counters_details["output_errors"]) > 0:
             counter = colored(counters_details["output_errors"], "red")
         else:
             counter = counters_details["output_errors"]
         return counter
 
-    def colorize_temperature(self, temperature):
+    @staticmethod
+    def colorize_temperature(temperature):
         """
         Colorizes the temperature value based on threshold values.
 
@@ -160,25 +137,44 @@ class Cli(object):
           A colorized string containing the temperature.
         """
         if not (
-            temperature[""]
-            or temperature[""]
-            or temperature[""]
-            or temperature[""]
+            temperature["temperature_alarm_high"]
+            or temperature["temperature_alarm_low"]
+            or temperature["temperature_warn_high"]
+            or temperature["temperature_warn_low"]
         ):
-            temperature_str = temperature[""]
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "red")
-        elif float(temperature[""]) > float(temperature[""]):
-            temperature_str = colored(temperature[""], "orange")
-        elif float(temperature[""]) < float(temperature[""]):
-            temperature_str = colored(temperature[""], "blue")
-        elif float(temperature[""]) < float(temperature[""]):
-            temperature_str = colored(temperature[""], "cyan")
+            temperature_str = temperature["temperature_current"]
+        elif float(temperature["temperature_current"]) > float(
+            temperature["temperature_alarm_high"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "red"
+            )
+        elif float(temperature["temperature_current"]) > float(
+            temperature["temperature_warn_high"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "yellow"
+            )
+        elif float(temperature["temperature_current"]) < float(
+            temperature["temperature_warn_low"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "blue"
+            )
+        elif float(temperature["temperature_current"]) < float(
+            temperature["temperature_alarm_low"]
+        ):
+            temperature_str = colored(
+                temperature["temperature_current"], "cyan"
+            )
         else:
-            temperature_str = colored(temperature[""], "green")
+            temperature_str = colored(
+                temperature["temperature_current"], "green"
+            )
         return temperature_str
 
-    def colorize_voltage(self, voltage):
+    @staticmethod
+    def colorize_voltage(voltage):
         """
         Colorizes the voltage value based on threshold values.
 
@@ -187,21 +183,35 @@ class Cli(object):
         Returns:
           A colorized string containing the voltage.
         """
-        if not (voltage[""] or voltage[""] or voltage[""] or voltage[""]):
-            voltage_str = voltage[""]
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
+        if not (
+            voltage["voltage_alarm_high"]
+            or voltage["voltage_warn_high"]
+            or voltage["voltage_warn_low"]
+            or voltage["voltage_alarm_low"]
         ):
-            voltage_str = colored(voltage[""], "red")
-        elif (float(voltage[""]) > float(voltage[""])) or (
-            float(voltage[""]) < float(voltage[""])
+            voltage_str = voltage["voltage_current"]
+        elif (
+            float(voltage["voltage_current"])
+            > float(voltage["voltage_alarm_high"])
+        ) or (
+            float(voltage["voltage_current"])
+            < float(voltage["voltage_alarm_low"])
         ):
-            voltage_str = colored(voltage[""], "yellow")
+            voltage_str = colored(voltage["voltage_current"], "red")
+        elif (
+            float(voltage["voltage_current"])
+            > float(voltage["voltage_warn_high"])
+        ) or (
+            float(voltage["voltage_current"])
+            < float(voltage["voltage_warn_low"])
+        ):
+            voltage_str = colored(voltage["voltage_current"], "yellow")
         else:
-            voltage_str = colored(voltage[""], "green")
+            voltage_str = colored(voltage["voltage_current"], "green")
         return voltage_str
 
-    def colorize_amperage(self, amps):
+    @staticmethod
+    def colorize_amperage(amps):
         """
         Colorizes the current/amp value based on the threshold values.
 
@@ -210,7 +220,24 @@ class Cli(object):
         Returns:
           A colorized string containing the current/amperage.
         """
-        pass
+        if not (
+            amps["_alarm_high"]
+            or amps["_warn_high"]
+            or amps["_alarm_low"]
+            or amps["_alarm_low"]
+        ):
+            amps_str = amps["_current"]
+        elif (float(amps["_current"]) > float(amps["_alarm_high"])) or (
+            float(amps["_current"]) < float(amps["_alarm_low"])
+        ):
+            amps_str = colored(amps["_current"], "red")
+        elif (float(amps["_current"]) > float(amps["_warn_high"])) or (
+            float(amps["_current"]) < float(amps["_warn_low"])
+        ):
+            amps_str = colored(amps["_current"], "yellow")
+        else:
+            amps_str = colored(amps["_current"], "green")
+        return amps_str
 
     @staticmethod
     def format_interface_results(details):
@@ -279,7 +306,8 @@ class Cli(object):
             output += "\n"
         return output
 
-    def format_chassis_results(self, chassis_info):
+    @staticmethod
+    def format_chassis_results(chassis_info):
         """
         Formats the results of the gather_chassis_details method into a
             multiline string.
@@ -300,7 +328,8 @@ class Cli(object):
         )
         return output
 
-    def format_route_results(self, route):
+    @staticmethod
+    def format_route_results(route):
         """
         Formats the results of the gather_route_results method into a multiline
             string.
@@ -314,7 +343,7 @@ class Cli(object):
         output = "\n"
         return output
 
-    def gather_and_format_details(self):
+    def gather_details(self):
         """
         Master method that runs the appropriate query and format methods.
 
@@ -323,25 +352,55 @@ class Cli(object):
         Returns:
           A multiline string containing the output ready to pring to console.
         """
+        results = self.gather_details(self)
         colorama.init()
-        valid_query = bool(self.interface_name or self.chassis or self.route)
-        if valid_query:
+        if not results["error"]:
+            interface_info = results.get("interface_info", default=None)
+            chassis_info = results.get("chassis_info", default=None)
+            route_info = results.get("route_info", default=None)
             output = "\n"
             output += ">" * 80
-        if self.interface_name:
-            interface = self.gather_interface_details()
-            output += self.format_interface_results(interface)
-        if self.chassis:
-            chassis_info = self.gather_chassis_details()
-            output += self.format_chassis_results(chassis_info)
-        if self.route:
-            route_info = self.gather_route_results()
-            output += self.format_route_results(route_info)
-        if valid_query:
+            if interface_info:
+                output += self.format_interface_results(interface_info)
+            if chassis_info:
+                output += self.format_chassis_results(chassis_info)
+            if route_info:
+                output += self.format_route_results(route_info)
             output += "<" * 80
             output += "\n"
+        else:
+            output = colored("EPIC FAIL", "red")
         return output
 
+    # def gather_and_format_details(self):
+    # """
+    # Master method that runs the appropriate query and format methods.
+
+    # Args:
+    # None
+    # Returns:
+    # A multiline string containing the output ready to pring to console.
+    # """
+    # colorama.init()
+    # valid_query = bool(self.interface_name or self.chassis or self.route)
+    # if valid_query:
+    # output = "\n"
+    # output += ">" * 80
+    # if self.interface_name:
+    # interface = self.gather_interface_details()
+    # output += self.format_interface_results(interface)
+    # if self.chassis:
+    # chassis_info = self.gather_chassis_details()
+    # output += self.format_chassis_results(chassis_info)
+    # if self.route:
+    # route_info = self.gather_route_results()
+    # output += self.format_route_results(route_info)
+    # if valid_query:
+    # output += "<" * 80
+    # output += "\n"
+    # return output
+
+    @staticmethod
     def initialize_parser():
         """
         Builds an argument parser object.
@@ -389,7 +448,10 @@ class Cli(object):
             "-m",
             "--mac_addr",
             action="store",
-            help=("Return MAC address table information for a given MAC"
-                  " address.",
+            help=(
+                "Return MAC address table information for a given MAC"
+                " address."
+            ),
         )
-        return parser.parse_args()
+        arguments = parser.parse_args()
+        return vars(arguments)

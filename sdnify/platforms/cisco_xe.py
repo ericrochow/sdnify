@@ -1,12 +1,25 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Cisco IOS-XE-specific functions, classes and definitions.
+"""
+from . import SSHPlatform
 
 
 class IOSXE(Platform):
     """
+    Class to interact with devices on the Cisco IOS-XE platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
+        Instantiates an object of the SSHPlatform class with the appropriate
+            options for a Cisco IOS-XE device.
+
+        Args:
+          None
+        Returns:
+          An instantiated SSHPlatform object.
         """
         if "interface" in kwargs:
             interface_name = kwargs["interface"]

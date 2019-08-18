@@ -1,20 +1,26 @@
-from . import Platform
+#!/usr/bin/env python
+"""
+Contains Cisco NXOS-specific functions, classes and definitions.
+"""
+from .platforms import SSHPlatform
 
 
-class NXOS(Platform):
+class NXOS(SSHPlatform):
     """
-    Instantiates an object of the Platform class with the appropriate options
-        for a Cisco NX-OS device.
-
-    Args:
-      None
-    Returns:
-      An instantiated Platform object.
+    Class to interact with devices on the Cisco NXOS platform. Methods and
+        Attributes inherited from the SSHPlatform parent class.
     """
 
     def __init__(self, **kwargs):
         """
-        """
+        Instantiates an object of the Platform class with the appropriate options
+            for a Cisco NX-OS device.
+
+        Args:
+          None
+        Returns:
+          An instantiated SSHPlatform object.
+       """
         if "interface" in kwargs:
             interface_name = kwargs["interface"]
         else:
