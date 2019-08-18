@@ -3,6 +3,8 @@
 Contains interface methods common to all interfaces.
 """
 
+import tablib
+
 from .platforms.arista_eos import EOS
 from .platforms.cisco_ios import IOS
 from .platforms.cisco_nxos import NXOS
@@ -167,6 +169,43 @@ def gather_interface_details(scraper_object):
         config_details = {"config": False}
     details = {**details, **config_details}
     if counters_results:
+        # TODO: Is tablib the right tool for the job? Seems convoluted to
+        # modify existing data.
+        """
+        counters_details = tablib.Dataset()
+        counters_details.headers = [
+            "Counters",
+            "Interface Name",
+            "State",
+            "Hardware Type",
+            "MAC",
+            "MTU",
+            "Duplex",
+            "Speed",
+            "Bandwidth",
+            "Encapsulation",
+            "Input Rate",
+            "Output Rate",
+            "Input Errors",
+            "Output Errors",
+        ]
+        counters_details.append(
+            True,
+            counters_results[0],
+            "{}/{}".format(counters_results[1], counters_results[2]),
+            counters_results[3],
+            counters_results[4],
+            counters_results[5],
+            counters_results[6],
+            counters_results[7],
+            counters_results[8],
+            counters_results[9],
+            counters_results[10],
+            counters_results[11],
+            counters_results[12],
+            counters_results[13],
+        )
+        """
         counters_details = {
             "counters": True,
             "interface_name": counters_results[0],
