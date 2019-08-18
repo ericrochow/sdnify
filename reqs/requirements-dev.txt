@@ -80,7 +80,7 @@ pysocks==1.7.0
 pytest-cov==2.7.1
 pytest-forked==1.0.2
 pytest-mock==1.10.4
-pytest-xdist==1.25.0
+pytest-xdist==1.29.0
 pytest==5.1.0
 python-dateutil==2.8.0
 pytz==2019.2
@@ -91,7 +91,7 @@ ruamel.yaml.clib==0.1.2 ; platform_python_implementation == 'CPython' and python
 ruamel.yaml==0.16.4
 six==1.12.0
 snowballstemmer==1.9.0
-soupsieve==1.9.2
+soupsieve==1.9.3
 sphinx==1.5.4
 strictyaml==1.0.3
 toml==0.10.0
