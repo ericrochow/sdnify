@@ -16,8 +16,10 @@ with open("HISTORY.md", mode="r", encoding="utf-8") as f:
     history = f.read()
 with open("reqs/requirements.txt") as reqs:
     requires = reqs.read().splitlines()
-with open("reqs/requirements-test.txt") as reqs:
-    test_requires = reqs.read().splitlines()
+# with open("reqs/requirements-test.txt") as reqs:
+# test_requires = reqs.read().splitlines()
+
+test_requires = ["codecov", "pytest-cov", "pytest.mock", "pytest"]
 
 
 def find_current_version():
