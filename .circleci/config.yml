@@ -24,7 +24,7 @@ jobs:
             - "/usr/local/lib/python3.6/site-packages"
       - run:
           command: |
-            py.test tests/
+            pipenv run py.test tests/ --junitxml=test-reports/junit.xml
       - store_test_results:
           path: test-results
       - store_artifacts:
