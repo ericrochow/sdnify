@@ -18,10 +18,10 @@
              pipenv install --dev
        - save_cache:
            key: sdnify-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-             paths:
-               - ".venv"
-               - "/usr/local/bin"
-               - "/usr/local/bin/python3.6/site-packages"
+           paths:
+             - ".venv"
+             - "/usr/local/bin"
+             - "/usr/local/bin/python3.6/site-packages"
         - run:
             command: |
               py.test tests/
