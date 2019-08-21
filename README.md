@@ -1,5 +1,11 @@
 # sdnify
 
+![GitHub](https://img.shields.io/github/license/ericrochow/sdnify)
+![CircleCI](https://img.shields.io/circleci/build/github/ericrochow/sdnify/master)
+![TravisCI](https://img.shields.io/travis/ericrochow/sdnify/master)
+[![codecov](https://codecov.io/gh/ericrochow/sdnify/branch/such_refactor/graph/badge.svg)](https://codecov.io/gh/ericrochow/sdnify)
+[![codestyle](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
+
 ## Overview
 
 sdnify is meant as a quick way of gather information by running several commands, parsing the outputs, the returning values in an easily-digestible format.
