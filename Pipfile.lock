@@ -190,9 +190,9 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:1d2af392cef8c8227bd2ac3ebe3a28b25aba74fd4fa473ce106065f0b73bfe2e"
+                "sha256:72d1ed243972cad0b3c236230083cac00d9c72804e64a2ae93d7901aec1a8f1c"
             ],
-            "version": "==2.6.2"
+            "version": "==2.6.3"
         },
         "pandas": {
             "hashes": [
@@ -1074,11 +1074,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:3805d095f1ea279b9870c3eeae5dddf8a81b10952c8835cd628cf1875b0ef031",
-                "sha256:abc562321c2d190dd63c2faadf70b86b7af21a553b61f0df5f5e1270717dc5a3"
+                "sha256:95b1f6db806e5b1b5b443efeb58984c24945508f93a866c1719e1a507a957d7c",
+                "sha256:c3d5020755f70c82eceda3feaf556af9a341334414a8eca521a18f463bcead88"
             ],
             "index": "pypi",
-            "version": "==5.1.0"
+            "version": "==5.1.1"
         },
         "pytest-cov": {
             "hashes": [
@@ -1151,10 +1151,10 @@
         },
         "ruamel.yaml": {
             "hashes": [
-                "sha256:3aa5573a986ab6627c37e2c79befeff2e6eb7bcf780a49250b4fb19142309ecd",
-                "sha256:8fa2ca602fef5d4eed9da2f49e22a04ac6d1e1a5c673bf8f65fbd0529ac2cb6c"
+                "sha256:0db639b1b2742dae666c6fc009b8d1931ef15c9276ef31c0673cc6dcf766cf40",
+                "sha256:412a6f5cfdc0525dee6a27c08f5415c7fd832a7afcb7a0ed7319628aed23d408"
             ],
-            "version": "==0.16.4"
+            "version": "==0.16.5"
         },
         "ruamel.yaml.clib": {
             "hashes": [
@@ -1195,10 +1195,10 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:72b5f1aea9101cf720a36bb2327ede866fd6f1a07b1e87c92a1cc18113cbc946",
-                "sha256:e4e9c053d59795e440163733a7fec6c5972210e1790c507e4c7b051d6c5259de"
+                "sha256:8662843366b8d8779dec4e2f921bebec9afd856a5ff2e82cd419acc5054a1a92",
+                "sha256:a5a6166b4767725fd52ae55fee8c8b6137d9a51e9f1edea461a062a759160118"
             ],
-            "version": "==1.9.2"
+            "version": "==1.9.3"
         },
         "sphinx": {
             "hashes": [
