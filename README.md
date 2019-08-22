@@ -4,6 +4,7 @@
 ![CircleCI](https://img.shields.io/circleci/build/github/ericrochow/sdnify/master)
 ![TravisCI](https://img.shields.io/travis/ericrochow/sdnify/master)
 [![codecov](https://codecov.io/gh/ericrochow/sdnify/branch/such_refactor/graph/badge.svg)](https://codecov.io/gh/ericrochow/sdnify)
+![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/ericrochow/sdnify)
 [![codestyle](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 
 ## Overview
