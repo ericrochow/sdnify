@@ -1,30 +1,32 @@
 language: python
-# command to install dependencies
-install: "make"
-# command to run tests
+install: make
 script:
-  - |
-    make test-readme
-  - make ci
+- 'make test-readme
+
+'
+- make ci
 cache: pip
 jobs:
   include:
-    - stage: test
-      script:
-        - make test-readme
-        - make ci
-      python: '3.5'
-    - stage: test
-      script:
-        - make test-readme
-        - make ci
-      python: '3.6'
-    - stage: test
-      script:
-        - make test-readme
-        - make ci
-      python: '3.7'
-      dist: xenial
-    - stage: coverage
-      python: '3.6'
-      script: codecov
+  - stage: test
+    script:
+    - make test-readme
+    - make ci
+    python: '3.5'
+  - stage: test
+    script:
+    - make test-readme
+    - make ci
+    python: '3.6'
+  - stage: test
+    script:
+    - make test-readme
+    - make ci
+    python: '3.7'
+    dist: xenial
+  - stage: coverage
+    python: '3.6'
+    script: codecov
+notifications:
+  slack:
+    secure: BxLZB5aSM46Inkot410kDnOVDQJn1pKOKnVCEDntMkEBljgSc5Cp6w6kyFYOMcBjh4xzfqT1CX5lCQBpu+E+EHWqepBNdH9qhGue7WOLpNHFG/zlxWc8ZguUlMpLzouxNSZ0eCOphNNQgTI6JYujXGdvxKHKbmQthN92ePp2bb+2UlfeG/QvNSUVMi4crZJyYybmcEdNIkn+W6PWmGPAP2pz/4JVx1jPKLAvtbZuP1jr+PRje3CXf4EOBk0VHq1F1MdJMZogkdWWz/AXIOXAFXW1pq2hn7Yd80aBjW5Gbh34b3bt65kDbVvz50lAGTsABomP4uj+TnVb9Acl+tIv52Dhbwar5dVFkiBWTLaSqoqUcxDDnvXB9KJ5S3wQXumOMOd7WGkoFa6ioEbWcIOr/oWlis/WFYq5xuPfac2QRCiC/RRzDxeTPDKEDNtlQnWzzWnGxBX1prYlmJZU+scMBeCX3YnDkufL5TtHklb17i410tKh5c+VTAKo5DykRowGbCVzZ6mc7iUwEB9kl5r9EFYD0pfo3KJAOd/CMc9bhfOGr1Go7noFIrilQMwUNloNgJz3Hji0vTa9SR5x6aZRMuyl9OgNvhC8/V4O9wmipqBrK9KqswZvzA7P39n8shOUCBaUiJ/O3sqgopc0ijTUcduEzxYPyAcYwJAIvR9pNwM=
