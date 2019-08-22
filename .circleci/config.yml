@@ -22,7 +22,7 @@ jobs:
             - ".venv"
             - "/usr/local/bin"
             - "/usr/local/lib/python3.6/site-packages"
-      - run: mkdir test-reports
+      - run: mkdir /home/circleci/project/test-results
       - run:
           command: |
             pipenv run py.test tests/ --junitxml=test-reports/junit.xml
