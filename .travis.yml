@@ -14,7 +14,7 @@ script:
 '
 - make ci
 - pipenv run py.test tests/
-- pipenv run bandit -r -s B322 sdnify -n 3 -l -f xml -o test-results/bandit.xml
+- pipenv run bandit -r -s B322 sdnify -n 3 -l
 cache: pip
 # jobs:
 # include:
