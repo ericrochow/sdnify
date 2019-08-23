@@ -31,7 +31,7 @@ blocks:
         - name: Flake8
           commands:
             pipenv run flake8 sdnify
-  - name: "Run tests"
+  - name: "Run PyTest"
     task:
       prologue:
         - sem-version python 3.7
@@ -41,3 +41,13 @@ blocks:
       jobs:
         - name: PyTest
           comannds: pipenv run py.test tests/
+  - name: "Run Bandit"
+    task:
+      prologue:
+        - sem-version python 3.7
+        - checkout
+        - cache restore
+        - pipenv install --dev
+      jobs:
+        - name: Bandit
+          comannds: pipenv run bandit -r -s B322 sdnify -n 3 -l

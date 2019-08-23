@@ -25,7 +25,8 @@ jobs:
       - run: mkdir /home/circleci/project/test-results
       - run:
           command: |
-            pipenv run py.test tests/ --junitxml=test-reports/junit.xml
+            pipenv run py.test tests/ --junitxml=test-results/junit.xml
+            pipenv run bandit -r -s B322 sdnify -n 3 -l -f xml -o test-results/bandit.xml
       - store_test_results:
           path: test-results
       - store_artifacts:
