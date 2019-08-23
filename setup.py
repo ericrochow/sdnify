@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-VERSION_FILE = os.path.join(HERE, "/VERSION")
+VERSION_FILE = os.path.join(HERE, "VERSION")
 
 with open("README.md", mode="r", encoding="utf-8") as f:
     readme = f.read()
@@ -16,10 +16,12 @@ with open("HISTORY.md", mode="r", encoding="utf-8") as f:
     history = f.read()
 with open("reqs/requirements.txt") as reqs:
     requires = reqs.read().splitlines()
+    requires = (require for require in requires if not require.startswith("-"))
+    print("requires={}".format(requires))
 # with open("reqs/requirements-test.txt") as reqs:
 # test_requires = reqs.read().splitlines()
 
-test_requires = ["codecov", "pytest-cov", "pytest.mock", "pytest"]
+test_requires = ["codecov", "pytest-cov", "pytest-mock", "pytest"]
 
 
 def find_current_version():
@@ -35,7 +37,7 @@ def find_current_version():
         return v.read()
 
 
-def update_version(current, new_version):
+def update_version(new_version):
     """
     Increments the version number.
 
@@ -44,7 +46,7 @@ def update_version(current, new_version):
     Returns:
       A string containing the updated version number.
     """
-    with open(VERSION_FILE, "w") as v:
+    with open(VERSION_FILE, "w+") as v:
         for line in v:
             v.write(new_version)
         return find_current_version()
@@ -103,7 +105,9 @@ class PyTest(TestCommand):
 
 
 about = {}
-with open(os.path.join(HERE, "sdnify", "__version__.py"), "r", "utf-8") as f:
+with open(
+    os.path.join(HERE, "sdnify", "__version__.py"), "r", encoding="utf-8"
+) as f:
     exec(f.read(), about)
 
 packages = find_packages(exclude=["tests"])
