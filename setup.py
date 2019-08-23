@@ -16,10 +16,9 @@ with open("HISTORY.md", mode="r", encoding="utf-8") as f:
     history = f.read()
 with open("reqs/requirements.txt") as reqs:
     requires = reqs.read().splitlines()
-    requires = (require for require in requires if not require.startswith("-"))
-    print("requires={}".format(requires))
-# with open("reqs/requirements-test.txt") as reqs:
-# test_requires = reqs.read().splitlines()
+    requires = list(
+        require for require in requires if not require.startswith("-")
+    )
 
 test_requires = ["codecov", "pytest-cov", "pytest-mock", "pytest"]
 
