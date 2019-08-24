@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from datetime import datetime
+# from datetime import datetime
 from io import open
 import os
 import sys
@@ -36,37 +36,37 @@ def find_current_version():
         return v.read()
 
 
-def update_version(new_version):
-    """
-    Increments the version number.
+# def update_version(new_version):
+# """
+# Increments the version number.
 
-    Args:
-      None
-    Returns:
-      A string containing the updated version number.
-    """
-    with open(VERSION_FILE, "w+") as v:
-        for line in v:
-            v.write(new_version)
-        return find_current_version()
+# Args:
+# None
+# Returns:
+# A string containing the updated version number.
+# """
+# with open(VERSION_FILE, "w+") as v:
+# for line in v:
+# v.write(new_version)
+# return find_current_version()
 
 
-def generate_version():
-    """
-    """
-    date = datetime.now()
-    year = date.year
-    month = date.month
-    day = date.day
-    current_version = find_current_version()
-    if current_version.startswith("{}.{}.{}".format(year, month, day)):
-        minor_version = int(current_version[-1]) + 1
-        new_version = update_version(
-            "{}.{}.{}.{}".format(year, month, date, minor_version)
-        )
-    else:
-        new_version = update_version("{}.{}.{}.0".format(year, month, day))
-    return new_version
+# def generate_version():
+# """
+# """
+# date = datetime.now()
+# year = date.year
+# month = date.month
+# day = date.day
+# current_version = find_current_version()
+# if current_version.startswith("{}.{}.{}".format(year, month, day)):
+# minor_version = int(current_version[-1]) + 1
+# new_version = update_version(
+# "{}.{}.{}.{}".format(year, month, date, minor_version)
+# )
+# else:
+# new_version = update_version("{}.{}.{}.0".format(year, month, day))
+# return new_version
 
 
 if sys.argv[-1] == "publish_dev":
@@ -146,6 +146,6 @@ setup(
     python_requires=">=3.5",
     tests_require=test_requires,
     url=about["__url__"],
-    version=generate_version(),
+    version=version,
     zip_safe=False,
 )
