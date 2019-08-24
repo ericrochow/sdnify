@@ -62,16 +62,10 @@ Will require major refactors.
 ## FAQs
 
 Q: What is the point of this project?
-A: Mainly for fun and my own edification. If I (or others) find it useful in
-   real-life, then that's a bonus.
+A: Mainly for fun and my own edification. If I (or others) find it useful in real-life, then that's a bonus.
 
 Q: Doesn't this seem like you're trying to re-create NAPALM?
-A: Yes and no. Napalm doensn't have drivers for every platform I'm looking to
-   cover, nor does it have getters for everything I'm looking to track.
+A: Yes and no. Napalm doensn't have drivers for every platform I'm looking to cover, nor does it have getters for everything I'm looking to track.
 
-Q: Some of the platforms that are covered have options other than screen
-   scraping available. Why stick to screen scraping?
-A: Mostly to get off the ground as quickly as possible. By using screen
-   scraping for everything, I can avoid needing to add additional methods. My
-   goal is to move toward NETCONF/gRPC/REST where possible, but that's down the
-   road.
+Q: Some of the platforms that are covered have options other than screen scraping available. Why stick to screen scraping?
+A: Mostly to get off the ground as quickly as possible. By using screen scraping for everything, I can avoid needing to add additional methods. My goal is to move toward NETCONF/gRPC/REST where possible, but that's down the road.
