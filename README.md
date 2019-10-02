@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/ericrochow/sdnify/branch/such_refactor/graph/badge.svg)](https://codecov.io/gh/ericrochow/sdnify)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/ericrochow/sdnify)
 [![codestyle](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=ericrochow/sdnify)](https://dependabot.com)
 
 ## Overview
 
