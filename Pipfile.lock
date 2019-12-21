@@ -16,11 +16,11 @@
     "default": {
         "argcomplete": {
             "hashes": [
-                "sha256:2f2052ea5156eb5cc7edce9c0ddc937e30c49c1097d51b24f34350a08632a264",
-                "sha256:45836de8cc63d2f6e06b898cef1e4ce1e9907d246ec77ac8e64f23f153d6bec1"
+                "sha256:a37f522cf3b6a34abddfedb61c4546f60023b3799b22d1cd971eacdc0861530a",
+                "sha256:d8ea63ebaec7f59e56e7b2a386b1d1c7f1a7ae87902c9ee17d377eaa557f06fa"
             ],
             "index": "pypi",
-            "version": "==1.10.0"
+            "version": "==1.10.3"
         },
         "argparse": {
             "hashes": [
