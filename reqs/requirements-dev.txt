@@ -46,7 +46,7 @@ hupper==1.9.1
 idna==2.8
 imagesize==1.1.0
 ipython-genutils==0.2.0
-ipython==7.8.0
+ipython==7.10.2
 itsdangerous==1.1.0
 jedi==0.15.2
 jinja2==2.10.3
@@ -66,7 +66,7 @@ pkginfo==1.5.0.1
 plaster-pastedeploy==0.7
 plaster==1.0
 pluggy==0.13.1
-prompt-toolkit==2.0.10
+prompt-toolkit==3.0.2
 ptyprocess==0.6.0
 py==1.8.0
 pycodestyle==2.5.0
