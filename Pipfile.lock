@@ -755,11 +755,11 @@
         },
         "flake8-comprehensions": {
             "hashes": [
-                "sha256:7b174ded3d7e73edf587e942458b6c1a7c3456d512d9c435deae367236b9562c",
-                "sha256:e36fc12bd3833e0b34fe0639b7a817d32c86238987f532078c57eafdc7a8a219"
+                "sha256:6de428c3ac67d3614d527456469c8a3d6638960e9ad7e1222358526a2507400a",
+                "sha256:e3a8350a35d7bc71f8a1f64cf3c633a418a26b0edace2219d26ea4dd78ac21f3"
             ],
             "index": "pypi",
-            "version": "==2.2.0"
+            "version": "==3.1.4"
         },
         "flake8-import-order": {
             "hashes": [
