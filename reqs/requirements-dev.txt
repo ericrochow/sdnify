@@ -85,7 +85,7 @@ pytest-xdist==1.31.0
 pytest==5.3.2
 python-dateutil==2.8.1
 pytz==2019.3
-pyyaml==5.1.2
+pyyaml==5.2
 readme-renderer[md]==24.0
 repoze.lru==0.7
 requests==2.22.0
