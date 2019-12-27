@@ -1,5 +1,5 @@
 -i https://pypi.org/simple/
-argcomplete==1.10.3
+argcomplete==1.11.0
 argparse==1.4.0
 bcrypt==3.1.7
 cffi==1.13.2
