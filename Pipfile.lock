@@ -128,11 +128,11 @@
         },
         "netmiko": {
             "hashes": [
-                "sha256:bc284272d76defd5af59a748478aae99af462793f0898f4ab43c28c9a2000e42",
-                "sha256:e6b0cb98afb51fd1fb1d04d024d7572a0b5297dfa0bd18405ee36580deea65a1"
+                "sha256:ac33f17c4eb2fcf8331c2a5d00331bf1e9ce3672b40e5736c17cdb62ce92761b",
+                "sha256:f5426cd9726100432a82f674ff1d017f0c10f493463cf818efaa05ffd730eda8"
             ],
             "index": "pypi",
-            "version": "==2.4.2"
+            "version": "==3.0.0"
         },
         "numpy": {
             "hashes": [
