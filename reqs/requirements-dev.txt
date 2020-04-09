@@ -15,7 +15,7 @@ chameleon==3.7.0
 chardet==3.0.4
 check-manifest==0.41
 cmarkgfm==0.4.2
-codecov==2.0.15
+codecov==2.0.22
 coverage==5.0.4
 cryptography==2.9
 decorator==4.4.2
