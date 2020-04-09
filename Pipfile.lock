@@ -126,11 +126,11 @@
         },
         "netmiko": {
             "hashes": [
-                "sha256:ac33f17c4eb2fcf8331c2a5d00331bf1e9ce3672b40e5736c17cdb62ce92761b",
-                "sha256:f5426cd9726100432a82f674ff1d017f0c10f493463cf818efaa05ffd730eda8"
+                "sha256:0069bb18644ac8e6f0e2759da7069890bc05a0a160bfe0f18511c0ce3448191a",
+                "sha256:4a4d4b40bd5a8d6b1dbb1490c863b2dc0726595a3b30f96f0bb240d86092de64"
             ],
             "index": "pypi",
-            "version": "==3.0.0"
+            "version": "==3.1.0"
         },
         "numpy": {
             "hashes": [
@@ -390,7 +390,6 @@
                 "sha256:cc8da25076a1fe56c3ac63671e2194458e0c4d9c7becfd52ca251650d517903c",
                 "sha256:e78e426105ac07026ba098f04de8abe9b6e3e98b5befbf89b51a5ef0a4292b03"
             ],
-            "index": "pypi",
             "version": "==3.1.4"
         },
         "certifi": {
