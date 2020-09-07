@@ -92,7 +92,7 @@ readme-renderer[md]==25.0
 repoze.lru==0.7
 requests==2.23.0
 ruamel.yaml.clib==0.2.0 ; platform_python_implementation == 'CPython' and python_version < '3.9'
-ruamel.yaml==0.16.10
+ruamel.yaml==0.16.12
 six==1.14.0
 smmap==3.0.1
 snowballstemmer==2.0.0
